@@ -4,3 +4,6 @@
     build:
       context: .
       dockerfile: EventMarketplace/Dockerfile
+    ports:
+      - "5100:8080"
+      - "5101:8081"
