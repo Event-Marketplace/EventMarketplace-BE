@@ -419,3 +419,17 @@ FodyWeavers.xsd
 
 *.AssemblyInfoInputs.cache
 *.Rider.Project.Model.NuGet*.info
+
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/projectSettingsUpdater.xml
+/modules.xml
+/.idea.EventMarketplace.iml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
