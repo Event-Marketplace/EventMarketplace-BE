@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "BXJNRZ5uLGM=",
+  "success": true,
+  "projectFilePath": "/Users/barlomiejlongota/Desktop/IT sprawy/EventMarketplace_Project/Backend/EventMarketplace/EventMarketplace/EventMarketplace.csproj",
+  "expectedPackageFiles": [
+    "/Users/barlomiejlongota/.nuget/packages/microsoft.aspnetcore.openapi/9.0.0/microsoft.aspnetcore.openapi.9.0.0.nupkg.sha512",
+    "/Users/barlomiejlongota/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

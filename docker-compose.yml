@@ -1,0 +1,6 @@
+﻿services:
+  eventmarketplace:
+    image: eventmarketplace
+    build:
+      context: .
+      dockerfile: EventMarketplace/Dockerfile
