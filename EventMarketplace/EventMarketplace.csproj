@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DotNetEnv" Version="3.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     </ItemGroup>
@@ -20,6 +21,11 @@
 
     <ItemGroup>
       <Folder Include="Controllers\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EventMarketplace.Application\EventMarketplace.Application.csproj" />
+      <ProjectReference Include="..\EventMarketplace.Infrastructure\EventMarketplace.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
