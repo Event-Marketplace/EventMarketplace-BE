@@ -3,4 +3,7 @@
 GET {{EventMarketplace_HostAddress}}/weatherforecast/
 Accept: application/json
 
+
 ###
+GET {{EventMarketplace_HostAddress}}/api/TestCommunication
+Accept:  application/json
