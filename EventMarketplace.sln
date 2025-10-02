@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Application", "EventMarketplace.Application\EventMarketplace.Application.csproj", "{9A5DFD31-1410-4ADA-B114-C726FE595DFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Infrastructure", "EventMarketplace.Infrastructure\EventMarketplace.Infrastructure.csproj", "{A8A729B3-8EBB-4387-946E-CF8205ECB1FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Domain", "EventMarketplace.Domain\EventMarketplace.Domain.csproj", "{34101244-0228-41CD-AD51-D87E2609064D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,5 +27,13 @@ Global
 		{9A5DFD31-1410-4ADA-B114-C726FE595DFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A5DFD31-1410-4ADA-B114-C726FE595DFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A5DFD31-1410-4ADA-B114-C726FE595DFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A729B3-8EBB-4387-946E-CF8205ECB1FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A729B3-8EBB-4387-946E-CF8205ECB1FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A729B3-8EBB-4387-946E-CF8205ECB1FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A729B3-8EBB-4387-946E-CF8205ECB1FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34101244-0228-41CD-AD51-D87E2609064D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34101244-0228-41CD-AD51-D87E2609064D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34101244-0228-41CD-AD51-D87E2609064D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34101244-0228-41CD-AD51-D87E2609064D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

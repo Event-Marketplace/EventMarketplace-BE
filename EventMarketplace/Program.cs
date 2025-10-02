@@ -1,3 +1,6 @@
+using DotNetEnv;
+using EventMarketplace.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+var currentDirectory = Directory.GetCurrentDirectory();
+var parentDirectory = Directory.GetParent(currentDirectory)?.FullName;
+if (parentDirectory != null)
+{
+    var envFilePath = Path.Combine(parentDirectory, ".env");
+    Env.Load(envFilePath);
+}
+
+builder.Services.AddInfrastructure();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FE", policy =>
