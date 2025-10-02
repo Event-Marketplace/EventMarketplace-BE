@@ -16,7 +16,7 @@ if (parentDirectory != null)
     Env.Load(envFilePath);
 }
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FE", policy =>
