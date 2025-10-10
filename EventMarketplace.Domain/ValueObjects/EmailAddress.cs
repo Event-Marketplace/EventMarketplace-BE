@@ -16,13 +16,13 @@ public record EmailAddress
     public static EmailAddress Create(string email)
     {
         if (string.IsNullOrEmpty(email))
-            throw new Exception("Email nie może być pusty.");
+            throw new ArgumentException("Email nie może być pusty.");
   
 
         email = email.Trim().ToLowerInvariant();
 
         if (!EmailPattern.IsMatch(email))
-            throw new Exception("Nieprawidłowy adres email.");
+            throw new ArgumentException("Nieprawidłowy adres email.");
 
         return new EmailAddress(email);
     }
