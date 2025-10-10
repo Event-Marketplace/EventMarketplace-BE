@@ -16,6 +16,9 @@ if (parentDirectory != null)
     Env.Load(envFilePath);
 }
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddInfrastructure();
 builder.Services.AddCors(options =>
 {
@@ -34,11 +37,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.MapControllers();
 app.UseCors("FE");
 app.UseHttpsRedirection();
+app.UseAuthorization();
 
 
 app.Run();

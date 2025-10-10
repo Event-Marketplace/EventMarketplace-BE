@@ -1,12 +1,13 @@
 using EventMarketplace.Application.Abstract;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventMarketplace.Application.Commands.UserCommands.Handlers;
 
-public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork) : ICommandHandler<RegisterUserCommand>
+public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork, IPasswordManager passwordManager) : ICommandHandler<RegisterUserCommand>
 {
     public async Task ExecuteHandleAsync(RegisterUserCommand command)
     {
@@ -22,9 +23,8 @@ public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork) : IComman
                 CreateAt = DateTime.UtcNow,
                 IsOrganizerAccount = false
             };
-            
-            var passwordHasher = new PasswordHasher<User>();
-            var hashedPassword = passwordHasher.HashPassword(newUser, command.Dto.Password);
+
+            var hashedPassword = passwordManager.HashPassword(command.Dto.Password);
             newUser.Password = hashedPassword;
             
             await unitOfWork.Users.AddUserAsync(newUser);
