@@ -1,5 +1,6 @@
 using DotNetEnv;
 using EventMarketplace.Infrastructure;
+using EventMarketplace.Infrastructure.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
