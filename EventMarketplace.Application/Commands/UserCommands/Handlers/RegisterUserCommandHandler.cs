@@ -9,7 +9,7 @@ namespace EventMarketplace.Application.Commands.UserCommands.Handlers;
 
 public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork, IPasswordManager passwordManager) : ICommandHandler<RegisterUserCommand>
 {
-    public async Task ExecuteHandleAsync(RegisterUserCommand command)
+    public async Task ExecuteHandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync();
 

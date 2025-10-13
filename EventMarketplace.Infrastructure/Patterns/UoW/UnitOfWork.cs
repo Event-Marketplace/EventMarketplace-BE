@@ -13,20 +13,20 @@ public class UnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsync
 
     public IUserRepository Users { get; } = new UserPostgresRepository(context);
 
-    public async Task BeginTransactionAsync()
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
-        _transaction = await context.Database.BeginTransactionAsync();
+        _transaction = await context.Database.BeginTransactionAsync(cancellationToken);
     }
 
-    public async Task RollbackAsync()
+    public async Task RollbackAsync(CancellationToken cancellationToken)
     {
-        await _transaction.RollbackAsync();
+        await _transaction.RollbackAsync(cancellationToken);
     }
 
-    public async Task CommitAsync()
+    public async Task CommitAsync(CancellationToken cancellationToken)
     {
-        await context.SaveChangesAsync();
-        await _transaction.CommitAsync();
+        await context.SaveChangesAsync(cancellationToken);
+        await _transaction.CommitAsync(cancellationToken);
     }
 
     public void Dispose()

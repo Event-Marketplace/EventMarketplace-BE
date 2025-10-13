@@ -1,4 +1,5 @@
 using DotNetEnv;
+using EventMarketplace.Application;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.Middleware;
 
@@ -17,10 +18,12 @@ if (parentDirectory != null)
     Env.Load(envFilePath);
 }
 
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddInfrastructure();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FE", policy =>

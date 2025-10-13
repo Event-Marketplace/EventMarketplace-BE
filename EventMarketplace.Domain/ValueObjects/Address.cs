@@ -4,10 +4,10 @@ namespace EventMarketplace.Domain.ValueObjects;
 
 public record Address
 {
-    public string City { get; }
-    public string Street { get; }
-    public string Number { get;  }
-    public string PostalCode { get; }
+    public string? City { get; }
+    public string? Street { get; }
+    public string? Number { get;  }
+    public string? PostalCode { get; }
 
     private Address(string street, string city, string number, string postalCode)
     {

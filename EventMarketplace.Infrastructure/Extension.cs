@@ -1,3 +1,4 @@
+using EventMarketplace.Application.Patterns;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Infrastructure.DAL;
 using EventMarketplace.Infrastructure.DAL.Repositories;
@@ -12,7 +13,7 @@ public static class Extension
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddPostgres();
-        services.AddScoped<IUserRepository, UserPostgresRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 }
