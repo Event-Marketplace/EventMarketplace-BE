@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Abstract.Dispatchers;
 using EventMarketplace.Application.Commands.UserCommands;
+using EventMarketplace.Application.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +22,7 @@ namespace EventMarketplace.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command)
         {
-            await commandDispatcher.SendAsync(command);
-            return NoContent();
+            return Ok(await commandDispatcher.SendAsync<LoginUserCommand, LoginUserResponse>(command));
         }
         
     }

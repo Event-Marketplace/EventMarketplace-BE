@@ -1,7 +1,10 @@
+using System.Text;
 using DotNetEnv;
 using EventMarketplace.Application;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +16,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
@@ -43,6 +44,31 @@ builder.Services.AddCors(options =>
     });
 });
 
+#region JwtConfiguration
+
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+#endregion
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 app.UseMiddleware<ErrorMiddleware>();
@@ -58,8 +84,8 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 app.UseCors("FE");
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.Run();
 
