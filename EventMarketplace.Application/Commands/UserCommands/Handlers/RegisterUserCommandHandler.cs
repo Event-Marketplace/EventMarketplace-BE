@@ -15,6 +15,9 @@ public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork, IPassword
 
         try
         {
+            if (await unitOfWork.Users.CheckBusyEmail(command.Dto.Email))
+                throw new Exception("Ten adres email jest już zajęty.");
+            
             var email = EmailAddress.Create(command.Dto.Email);
             
             var newUser = new User()
@@ -24,6 +27,9 @@ public sealed class RegisterUserCommandHandler(IUnitOfWork unitOfWork, IPassword
                 IsOrganizerAccount = false
             };
 
+            if (!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
+                throw new Exception("Wprowadzone hasła nie są jednakowe.");
+            
             var hashedPassword = passwordManager.HashPassword(command.Dto.Password);
             newUser.Password = hashedPassword;
             
