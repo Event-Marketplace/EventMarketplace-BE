@@ -27,7 +27,7 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
         }
         catch (Exception ex)
         {
-            logger.LogWarning("Nieoczekiwany bład serwera.");
+            logger.LogWarning($"Nieoczekiwany bład serwera - {ex.Message}");
             
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";

@@ -30,7 +30,7 @@ public sealed class RegisterUserCommandHandler(
             {
                 EmailAddress = email,
                 CreateAt = DateTime.UtcNow,
-                IsOrganizerAccount = false
+                IsOrganizerAccount = command.Dto.IsOrganizerAccount
             };
 
             if (!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
