@@ -3,6 +3,7 @@ using DotNetEnv;
 using EventMarketplace.Application;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.Middleware;
+using EventMarketplace.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -31,7 +32,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerWithJwt();
 
 builder.Services.AddCors(options =>
 {
