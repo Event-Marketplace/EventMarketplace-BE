@@ -1,34 +1,40 @@
 using System.Net;
 using System.Text.Json;
+using EventMarketplace.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace EventMarketplace.Infrastructure.Middleware;
 
-public class ErrorMiddleware
+public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-        
-    public ErrorMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
-        await _next(context);
-        
-        if (context.Response.StatusCode == (int)HttpStatusCode.BadRequest)
+        try
         {
-            await HandleBadRequestAsync(context);
+            await next(context);
         }
-    }
-
-    private static Task HandleBadRequestAsync(HttpContext context)
-    {
-        context.Response.ContentType = "application/json";
-        var response = new { error = $"Bad - request, nieprawidłowe dane." };
-        var json = JsonSerializer.Serialize(response);
-
-        return context.Response.WriteAsync(json);
+        catch (AppException ex)
+        {
+            logger.LogWarning($"Błąd biznesowy: {ex.Message}");
+            
+            context.Response.StatusCode = ex.StatusCode;
+            context.Response.ContentType = "application/json";
+            
+            var response = new { error = ex.Message };
+            var json = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(json);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning("Nieoczekiwany bład serwera.");
+            
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.ContentType = "application/json";
+            
+            var response = new { error = "Wystąpił nieoczekiwany błąd serwera" };
+            var json = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(json);
+        }
     }
 }

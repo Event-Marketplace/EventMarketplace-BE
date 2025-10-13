@@ -11,11 +11,19 @@ namespace EventMarketplace.Controllers
         ICommandDispatcher commandDispatcher
         ) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command)
         {
             await commandDispatcher.SendAsync(command);
             return NoContent();
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command)
+        {
+            await commandDispatcher.SendAsync(command);
+            return NoContent();
+        }
+        
     }
 }
