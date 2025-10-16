@@ -75,16 +75,19 @@ var app = builder.Build();
 app.UseMiddleware<ErrorMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.MapControllers();
 app.UseCors("FE");
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();   
+}
 app.UseAuthentication();
 app.UseAuthorization();
 

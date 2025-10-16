@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Domain", "EventMarketplace.Domain\EventMarketplace.Domain.csproj", "{34101244-0228-41CD-AD51-D87E2609064D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventMarketplace.Tests", "EventMarketplace.Tests\EventMarketplace.Tests.csproj", "{6EE4BA69-769D-41F1-AB76-638ED9C37262}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,9 @@ Global
 		{34101244-0228-41CD-AD51-D87E2609064D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34101244-0228-41CD-AD51-D87E2609064D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34101244-0228-41CD-AD51-D87E2609064D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE4BA69-769D-41F1-AB76-638ED9C37262}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE4BA69-769D-41F1-AB76-638ED9C37262}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE4BA69-769D-41F1-AB76-638ED9C37262}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE4BA69-769D-41F1-AB76-638ED9C37262}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
