@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="DotNetEnv" Version="3.1.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
         <PrivateAssets>all</PrivateAssets>
@@ -24,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\EventMarketplace.Application\EventMarketplace.Application.csproj" />
       <ProjectReference Include="..\EventMarketplace.Domain\EventMarketplace.Domain.csproj" />
     </ItemGroup>
 

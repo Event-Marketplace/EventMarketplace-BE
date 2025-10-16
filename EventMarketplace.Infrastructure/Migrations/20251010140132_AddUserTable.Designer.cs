@@ -3,6 +3,7 @@ using System;
 using EventMarketplace.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventMarketplace.Infrastructure.Migrations
 {
     [DbContext(typeof(EventMarketplaceDbContext))]
-    partial class EventMarketplaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251010140132_AddUserTable")]
+    partial class AddUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,18 +98,22 @@ namespace EventMarketplace.Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("City")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("City");
 
                             b1.Property<string>("Number")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("Number");
 
                             b1.Property<string>("PostalCode")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("PostalCode");
 
                             b1.Property<string>("Street")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("Street");
 
@@ -142,10 +149,12 @@ namespace EventMarketplace.Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("FirstName")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("FirstName");
 
                             b1.Property<string>("LastName")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("LastName");
 
@@ -163,6 +172,7 @@ namespace EventMarketplace.Infrastructure.Migrations
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("PhoneValue")
+                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("PhoneNumber");
 
