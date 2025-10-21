@@ -94,7 +94,7 @@ public class LoginUserCommandHandlerTests
 
     [Theory]
     [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuiop")]
-    [InlineData("b.longota@wp.pl", "Password.123", "qwertyuio")]
+    [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuio")]
     public async Task Login_Successfully_When_Valid_Credentials(string email, string password, string token)
     {
         //arrange
