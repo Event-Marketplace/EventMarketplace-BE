@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\EventMarketplace.Application\EventMarketplace.Application.csproj" />
       <ProjectReference Include="..\EventMarketplace.Infrastructure\EventMarketplace.Infrastructure.csproj" />
+      <ProjectReference Include="..\EventMarketplace\EventMarketplace.csproj" />
     </ItemGroup>
 
 </Project>

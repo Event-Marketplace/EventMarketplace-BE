@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using DotNetEnv;
 using EventMarketplace.Application;
@@ -94,3 +95,5 @@ app.UseAuthorization();
 app.Run();
 
 Log.CloseAndFlush();
+
+public partial class Program{}

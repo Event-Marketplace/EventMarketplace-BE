@@ -18,7 +18,7 @@ public class RegisterUserCommandHandlerIntegrationTests
     {
         //arrange
         var options = new DbContextOptionsBuilder<EventMarketplaceDbContext>()
-            .UseInMemoryDatabase("TestDb")
+            .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
             .Options;
 
         await using var context = new EventMarketplaceDbContext(options);

@@ -36,5 +36,9 @@
       <ProjectReference Include="..\EventMarketplace.Application\EventMarketplace.Application.csproj" />
       <ProjectReference Include="..\EventMarketplace.Infrastructure\EventMarketplace.Infrastructure.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="../EventMarketplace.Tests" />
+    </ItemGroup>
 
 </Project>
