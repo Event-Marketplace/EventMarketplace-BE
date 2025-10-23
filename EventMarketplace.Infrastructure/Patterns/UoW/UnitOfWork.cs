@@ -37,7 +37,15 @@ public class UnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsync
 
     public async ValueTask DisposeAsync()
     {
-        await _transaction.DisposeAsync();
-        await context.DisposeAsync();
+        if (_transaction != null)
+        {
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+
+        if (_transaction != null)
+        {
+            await context.DisposeAsync();
+        }
     }
 }

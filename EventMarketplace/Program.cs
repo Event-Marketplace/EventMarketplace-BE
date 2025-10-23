@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text;
 using DotNetEnv;
 using EventMarketplace.Application;
@@ -47,24 +48,24 @@ builder.Services.AddCors(options =>
 
 #region JwtConfiguration
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        };
-    });
+// var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
+// var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+// var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+//
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = true,
+//             ValidateAudience = true,
+//             ValidateLifetime = true,
+//             ValidateIssuerSigningKey = true,
+//             ValidIssuer = jwtIssuer,
+//             ValidAudience = jwtAudience,
+//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+//         };
+//     });
 
 #endregion
 
@@ -75,19 +76,24 @@ var app = builder.Build();
 app.UseMiddleware<ErrorMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.MapControllers();
 app.UseCors("FE");
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();   
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.Run();
 
 Log.CloseAndFlush();
+
+public partial class Program{}

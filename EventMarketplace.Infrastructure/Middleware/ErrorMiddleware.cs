@@ -32,7 +32,7 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
             
-            var response = new { error = "Wystąpił nieoczekiwany błąd serwera" };
+            var response = new { error = $"Wystąpił nieoczekiwany błąd serwera - {ex.Message}" };
             var json = JsonSerializer.Serialize(response);
             await context.Response.WriteAsync(json);
         }
