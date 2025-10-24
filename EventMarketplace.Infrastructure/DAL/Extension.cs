@@ -22,6 +22,8 @@ public static class Extension
         });
         
         services.AddScoped<IUserRepository, UserPostgresRepository>();
+        services.AddHostedService<EventMarketplaceInitializer>();
+        
         return services;
     }
 }
