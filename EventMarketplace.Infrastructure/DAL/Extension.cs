@@ -1,3 +1,4 @@
+using EventMarketplace.Application.Abstract;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,14 @@ public static class Extension
         
         services.AddScoped<IUserRepository, UserPostgresRepository>();
         services.AddHostedService<EventMarketplaceInitializer>();
+        
+        var infrastructureAssembly = typeof(EventMarketplaceDbContext).Assembly;
+        
+        services.Scan(scan => scan.FromAssemblies(infrastructureAssembly)
+            .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+        );
         
         return services;
     }

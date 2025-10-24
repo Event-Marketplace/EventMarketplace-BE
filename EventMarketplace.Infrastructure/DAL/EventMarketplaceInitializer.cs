@@ -29,7 +29,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1200,
                     ImageUrl = "https://example.com/images/soundwave2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -41,7 +41,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 5000,
                     ImageUrl = "https://example.com/images/krakow-marathon.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -53,7 +53,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 3000,
                     ImageUrl = "https://example.com/images/planszowkon2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -65,7 +65,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 800,
                     ImageUrl = "https://example.com/images/futuretech2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -77,7 +77,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1500,
                     ImageUrl = "https://example.com/images/classicdrive2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -89,7 +89,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 400,
                     ImageUrl = "https://example.com/images/standup2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -101,7 +101,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1000,
                     ImageUrl = "https://example.com/images/formart2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -113,7 +113,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 2500,
                     ImageUrl = "https://example.com/images/league-masters.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -125,7 +125,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 700,
                     ImageUrl = "https://example.com/images/chopin2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 },
                 new Event
                 {
@@ -137,7 +137,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 50,
                     ImageUrl = "https://example.com/images/masterchef2025.jpg",
                     IsActive = true,
-                    UpdatedAt = DateTime.UtcNow
+                    CreateAt = DateTime.UtcNow,
                 }
                     
             ];

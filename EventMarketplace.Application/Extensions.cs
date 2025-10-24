@@ -11,14 +11,11 @@ public static class Extensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.Scan(scan => scan.FromAssembliesOf(typeof(IQueryHandler<,>))
+        services.Scan(scan => scan.FromAssembliesOf(typeof(ICommandHandler<>))
             .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
             .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
-                .AsImplementedInterfaces()
-                .WithTransientLifetime()
-            .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
            );
