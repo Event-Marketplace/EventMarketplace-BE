@@ -22,6 +22,9 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
       <PackageReference Include="Npgsql" Version="9.0.3" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+      <PackageReference Include="Quartz" Version="3.15.0" />
+      <PackageReference Include="Quartz-Concurrent.Extensions.Hosting" Version="3.2.2-concurrent-v1.0.0" />
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.15.0" />
     </ItemGroup>
 
     <ItemGroup>
