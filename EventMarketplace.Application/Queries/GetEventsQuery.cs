@@ -10,4 +10,5 @@ public sealed class GetEventsQuery : IQuery<EventListResponse>
     public string? Title { get; set; }
     public double? StartPrice { get; set; }
     public double? EndPrice { get; set; }
+    public int PageNumber { get; set; }
 }

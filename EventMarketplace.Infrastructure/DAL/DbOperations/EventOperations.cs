@@ -1,4 +1,5 @@
 using EventMarketplace.Application.Queries;
+using EventMarketplace.Domain.Consts;
 using EventMarketplace.Domain.Entities;
 
 namespace EventMarketplace.Infrastructure.DAL.DbOperations;
@@ -38,5 +39,11 @@ public static class EventOperations
         }
         
         return response;
-    } 
+    }
+
+    public static IQueryable<Event> PaginationEvents(this IQueryable<Event> response, GetEventsQuery query)
+    {
+        response = query.PageNumber > 0 ? response.Skip(((query.PageNumber - 1) * Variables.PAGE_SIZE)).Take(Variables.PAGE_SIZE): response.Take(Variables.PAGE_SIZE);
+        return response;
+    }
 }

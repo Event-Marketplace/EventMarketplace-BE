@@ -1,8 +1,11 @@
 using EventMarketplace.Application.Abstract;
 using EventMarketplace.Domain.Repositories;
+using EventMarketplace.Infrastructure.Crons;
 using EventMarketplace.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
+using Quartz.Spi;
 
 namespace EventMarketplace.Infrastructure.DAL;
 
@@ -22,9 +25,6 @@ public static class Extension
             options.UseNpgsql(connectionString);
         });
         
-        services.AddScoped<IUserRepository, UserPostgresRepository>();
-        services.AddHostedService<EventMarketplaceInitializer>();
-        
         var infrastructureAssembly = typeof(EventMarketplaceDbContext).Assembly;
         
         services.Scan(scan => scan.FromAssemblies(infrastructureAssembly)
@@ -32,6 +32,21 @@ public static class Extension
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
+        
+        services.AddScoped<IUserRepository, UserPostgresRepository>();
+        services.AddScoped<IEventRepository, EventPostgresRepository>();
+        services.AddHostedService<EventMarketplaceInitializer>();
+        
+
+        services.AddQuartz(q =>
+        {
+            var jobKey = new JobKey("DailySetUnActive");
+            q.AddJob<SetUnActiveEventsCronJob>(opt => opt.WithIdentity(jobKey));
+            q.AddTrigger(opt =>
+                opt.ForJob(jobKey).WithIdentity("DailySetUnActive-trigger").WithCronSchedule("0 0 2 * * ?"));
+        });
+        
+        services.AddQuartzHostedService(opt => { opt.WaitForJobsToComplete = true; });
         
         return services;
     }

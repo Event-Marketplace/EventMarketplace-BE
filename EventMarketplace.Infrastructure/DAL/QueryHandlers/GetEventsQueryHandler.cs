@@ -10,14 +10,18 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
 {
     public async Task<EventListResponse> ExecuteHandleAsync(GetEventsQuery query, CancellationToken cancellationToken)
     {
-        var events = await context.Events
+        var events = context.Events
+            .Where(x => x.IsActive)
             .FilterEvents(query)
-            .OrderByDescending(x => x.StartDate)
+            .OrderBy(x => x.StartDate);
+            
+        var paginatedResult = await events
+            .PaginationEvents(query)
             .ToListAsync(cancellationToken: cancellationToken);
 
         return new EventListResponse()
         {
-            Events = events.Select(x => new EventResponse()
+            Events = paginatedResult.Select(x => new EventResponse()
             {
                 Id = x.Id,
                 Description = x.Description,
@@ -30,7 +34,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
                 ImageUrl = x.ImageUrl,
                 CreatedAt = x.CreateAt
             }).ToList(),
-            TotalCount = events.Count
+            TotalCount = paginatedResult.Count
         };
     }
 }
