@@ -34,7 +34,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
                 ImageUrl = x.ImageUrl,
                 CreatedAt = x.CreateAt
             }).ToList(),
-            TotalCount = paginatedResult.Count
+            TotalCount = events.Count()
         };
     }
 }

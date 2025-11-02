@@ -15,6 +15,12 @@ public static class EventOperations
         }
 
         //date scope
+        if (query.StartDate.HasValue)
+            query.StartDate = DateTime.SpecifyKind(query.StartDate.Value, DateTimeKind.Utc);
+        if (query.EndDate.HasValue)
+            query.EndDate = DateTime.SpecifyKind(query.EndDate.Value, DateTimeKind.Utc);
+
+        
         if (query.StartDate.HasValue && query.EndDate.HasValue)
         {
             response = response.Where(x => x.StartDate >= query.StartDate && x.EndDate <= query.EndDate);
