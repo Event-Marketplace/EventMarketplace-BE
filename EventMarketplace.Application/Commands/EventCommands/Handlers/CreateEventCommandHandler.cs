@@ -1,35 +1,60 @@
+using System.Security.Claims;
 using EventMarketplace.Application.Abstract;
 using EventMarketplace.Application.Dtos.EventDtos;
+using EventMarketplace.Application.Exceptions;
+using EventMarketplace.Application.Patterns;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EventMarketplace.Application.Commands.EventCommands.Handlers;
 
 public class CreateEventCommandHandler(
-    IEventRepository eventRepository,
-    IUserRepository userRepository,
-    IHttpContextAccessor contextAccessor
-    ) : ICommandHandler<CreateEventCommand>
+    IHttpContextAccessor contextAccessor,
+    IUnitOfWork unitOfWork,
+    ILogger<CreateEventCommandHandler> logger) : ICommandHandler<CreateEventCommand>
 {
     public async Task ExecuteHandleAsync(CreateEventCommand command, CancellationToken cancellationToken = default)
     {
-        var loggedOrganizer = contextAccessor.HttpContext.User.Identity;
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         
-        
-        var newEvent = new Event()
+        try
         {
-            Id = Guid.CreateVersion7(),
-            Title = "Wyjazd na mecz El classico z udziałem FC Barcelony oraz Realu Madryt",
-            Description = "Wspólny wyjazd na mecz EL CLASSICO! Oferujemy w cenie biletu pobyt w hotelu (1 noc) oraz pełne wyżywienie. Zapraszamy do wspólnej przygody oraz poczucia emocji i doświadczenia na żywo tak wielkiego wydarzenia piłki nożnej.",
-            Price = 6500.00,
-            AvailableTickets = 50,
-            DurationOfTheEvent = DurationOfTheEvent.Create(
-                new DateTime(2026, 03, 13, 8, 00, 00, DateTimeKind.Utc), 
-                new DateTime(2026, 03, 14, 12, 00, 00, DateTimeKind.Utc)),
+            var loggedOrganizer = contextAccessor.HttpContext?.User;
             
+            if (loggedOrganizer?.Identity?.IsAuthenticated != true)
+                throw new AppException("Używtkownik nie jest zalogowany.");
             
-        };  
+            logger.LogInformation($"Rozpoczęcie procesu dodania nowego wydarzenia przez - {loggedOrganizer.FindFirst(ClaimTypes.Email)}");
+            
+            var newEvent = new Event()
+            {
+                Id = Guid.CreateVersion7(),
+                Title = command.Dto.Title,
+                Description = command.Dto.Description,
+                Price = command.Dto.Price,
+                AvailableTickets = command.Dto.AvailableTicketsCount,
+                DurationOfTheEvent = DurationOfTheEvent.Create(command.Dto.StartDateTime, command.Dto.EndDateTime),
+                OrganizerId = Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
+                ImageUrl = command.Dto.ImageUrl,
+                CreateAt = DateTime.UtcNow,
+            };
+
+            newEvent.IsActive = newEvent.DurationOfTheEvent.StartEvent.Date >= DateTime.UtcNow.Date;
+
+            await unitOfWork.Events.AddEventAsync(newEvent, cancellationToken);
+            await unitOfWork.CommitAsync(cancellationToken);
+            
+            logger.LogInformation($"Utworzono wydarzenie o ID - {newEvent.Id}");
+        }
+        catch (Exception e)
+        {
+            await unitOfWork.RollbackAsync(cancellationToken);
+            logger.LogError($"Błąd podczas dodawania nowego wydarzenia - {e.Message}");
+            throw;
+        }
     }
 }

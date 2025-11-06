@@ -46,33 +46,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-#region JwtConfiguration
-
-// var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-// var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-// var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
-//
-// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddJwtBearer(options =>
-//     {
-//         options.TokenValidationParameters = new TokenValidationParameters
-//         {
-//             ValidateIssuer = true,
-//             ValidateAudience = true,
-//             ValidateLifetime = true,
-//             ValidateIssuerSigningKey = true,
-//             ValidIssuer = jwtIssuer,
-//             ValidAudience = jwtAudience,
-//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-//         };
-//     });
-
-#endregion
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseMiddleware<ErrorMiddleware>();
 
 // Configure the HTTP request pipeline.
@@ -83,14 +62,14 @@ app.UseMiddleware<ErrorMiddleware>();
     app.UseSwaggerUI();
 //}
 
+
 app.MapControllers();
 app.UseCors("FE");
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();   
 }
-app.UseAuthentication();
-app.UseAuthorization();
+
 
 app.Run();
 

@@ -1,3 +1,4 @@
+using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,5 +17,10 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
 
         context.Events.UpdateRange(events);
         await context.SaveChangesAsync();
+    }
+
+    public async Task AddEventAsync(Event eventEntity, CancellationToken cancellationToken)
+    {
+        await context.Events.AddAsync(eventEntity, cancellationToken);
     }
 }
