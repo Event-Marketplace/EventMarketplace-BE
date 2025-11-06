@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,4 +13,6 @@ public class User : BaseEntity
     public string Password { get; set; }
     public bool IsOrganizerAccount { get; set; }
     public Address Address { get; set; }
+
+    public ICollection<Event> Events { get; set; } = [];
 }

@@ -13,7 +13,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
         var events = context.Events
             .Where(x => x.IsActive)
             .FilterEvents(query)
-            .OrderBy(x => x.StartDate);
+            .OrderBy(x => x.DurationOfTheEvent.StartEvent);
             
         var paginatedResult = await events
             .PaginationEvents(query)
@@ -28,8 +28,8 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
                 Price = x.Price,
                 Title = x.Title,
                 AvailableTickets = x.AvailableTickets,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
+                StartDate = x.DurationOfTheEvent.StartEvent,
+                EndDate = x.DurationOfTheEvent.EndEvent,
                 IsActive = x.IsActive,
                 ImageUrl = x.ImageUrl,
                 CreatedAt = x.CreateAt

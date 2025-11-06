@@ -3,6 +3,7 @@ using EventMarketplace.Application.Abstract.Dispatchers;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Jwt;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventMarketplace.Application;
@@ -24,6 +25,7 @@ public static class Extensions
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddHttpContextAccessor();
         
         return services;
     }

@@ -17,6 +17,22 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          entity.HasKey(e => e.Id);
       });
 
+      modelBuilder.Entity<User>(entity =>
+      {
+         entity.HasKey(x => x.Id);
+      });
+
+      #region RelationsConfig
+
+      modelBuilder.Entity<Event>()
+         .HasOne(e => e.Organizer)
+         .WithMany(u => u.Events)
+         .HasForeignKey(e => e.OrganizerId);
+
+      #endregion
+
+      #region ValueObjectsMapping
+
       modelBuilder.Entity<User>().OwnsOne(u => u.Address, a =>
       {
          a.Property(p => p.City).HasColumnName("City");
@@ -40,5 +56,15 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          f.Property(p => p.FirstName).HasColumnName("FirstName");
          f.Property(p => p.LastName).HasColumnName("LastName");
       });
+
+      modelBuilder.Entity<Event>().OwnsOne(e => e.DurationOfTheEvent, f =>
+      {
+         f.Property(p => p.StartEvent).HasColumnName("StartDate");
+         f.Property(p => p.EndEvent).HasColumnName("EndDate");
+      });
+
+      #endregion
+
+    
    }
 }

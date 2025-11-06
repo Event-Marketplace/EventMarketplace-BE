@@ -1,4 +1,5 @@
 using EventMarketplace.Application.Abstract.Dispatchers;
+using EventMarketplace.Application.Commands.EventCommands;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,12 @@ namespace EventMarketplace.Controllers
         public async Task<IActionResult> GetAllEvents([FromQuery] GetEventsQuery query)
         {
             return Ok(await queryDispatcher.QueryAsync<GetEventsQuery, EventListResponse>(query));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNewEvent([FromBody] CreateEventCommand command)
+        {
+            return Created();
         }
     }
 }

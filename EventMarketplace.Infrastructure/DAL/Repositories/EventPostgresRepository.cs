@@ -9,7 +9,7 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     {
         var events = await context.Events.ToListAsync();
 
-        foreach (var item in events.Where(item => item.StartDate < DateTime.UtcNow && item.EndDate < DateTime.UtcNow))
+        foreach (var item in events.Where(item => item.DurationOfTheEvent.StartEvent < DateTime.UtcNow && item.DurationOfTheEvent.EndEvent < DateTime.UtcNow))
         {
             item.IsActive = false;
         }
