@@ -29,7 +29,7 @@ if (parentDirectory != null)
     Env.Load(envFilePath);
 }
 
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -49,7 +49,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
+app.UseCors("FE");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ErrorMiddleware>();
@@ -64,7 +64,7 @@ app.UseMiddleware<ErrorMiddleware>();
 
 
 app.MapControllers();
-app.UseCors("FE");
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();   

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace EventMarketplace.Application.Dtos.EventDtos;
 
 public class CreateEventDto
@@ -9,5 +11,5 @@ public class CreateEventDto
     public DateTime EndDateTime { get; set; }
     public double Price { get; set; }
     public int AvailableTicketsCount { get; set; }
-    public string ImageUrl { get; set; }
+    public IFormFile Image{ get; set; }
 }

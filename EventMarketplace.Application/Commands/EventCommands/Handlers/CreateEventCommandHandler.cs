@@ -3,6 +3,7 @@ using EventMarketplace.Application.Abstract;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Domain.ValueObjects;
@@ -15,12 +16,13 @@ namespace EventMarketplace.Application.Commands.EventCommands.Handlers;
 public class CreateEventCommandHandler(
     IHttpContextAccessor contextAccessor,
     IUnitOfWork unitOfWork,
+    IBlobStorageService blobStorageService,
     ILogger<CreateEventCommandHandler> logger) : ICommandHandler<CreateEventCommand>
 {
     public async Task ExecuteHandleAsync(CreateEventCommand command, CancellationToken cancellationToken = default)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
             var loggedOrganizer = contextAccessor.HttpContext?.User;
@@ -29,6 +31,9 @@ public class CreateEventCommandHandler(
                 throw new AppException("Używtkownik nie jest zalogowany.");
             
             logger.LogInformation($"Rozpoczęcie procesu dodania nowego wydarzenia przez - {loggedOrganizer.FindFirst(ClaimTypes.Email)}");
+
+            var uploadAndReturnUriFromAzure =
+                await blobStorageService.UploadFileAsync(command.Dto.Image, "events", cancellationToken);
             
             var newEvent = new Event()
             {
@@ -39,10 +44,11 @@ public class CreateEventCommandHandler(
                 AvailableTickets = command.Dto.AvailableTicketsCount,
                 DurationOfTheEvent = DurationOfTheEvent.Create(command.Dto.StartDateTime, command.Dto.EndDateTime),
                 OrganizerId = Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
-                ImageUrl = command.Dto.ImageUrl,
+                ImageUrl = uploadAndReturnUriFromAzure,
                 CreateAt = DateTime.UtcNow,
             };
 
+            //problem z datami, w bazie mam infinity przez co ta flaga źle się setuje
             newEvent.IsActive = newEvent.DurationOfTheEvent.StartEvent.Date >= DateTime.UtcNow.Date;
 
             await unitOfWork.Events.AddEventAsync(newEvent, cancellationToken);

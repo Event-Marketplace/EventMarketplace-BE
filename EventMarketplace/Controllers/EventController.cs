@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Abstract.Dispatchers;
 using EventMarketplace.Application.Commands.EventCommands;
+using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
 using Microsoft.AspNetCore.Authorization;
@@ -20,8 +21,9 @@ namespace EventMarketplace.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddNewEvent([FromBody] CreateEventCommand command)
+        public async Task<IActionResult> AddNewEvent([FromForm] CreateEventDto Dto)
         {
+            var command = new CreateEventCommand(Dto);
             await commandDispatcher.SendAsync(command);
             return Created();
         }
