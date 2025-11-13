@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Abstract.Dispatchers;
 using EventMarketplace.Application.Commands.EventCommands;
+using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
@@ -32,6 +33,13 @@ namespace EventMarketplace.Controllers
             var command = new CreateEventCommand(Dto);
             await commandDispatcher.SendAsync(command);
             return Created();
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
+        {
+            await commandDispatcher.SendAsync(new DeleteEventCommand(id));
+            return NoContent();
         }
         
     }

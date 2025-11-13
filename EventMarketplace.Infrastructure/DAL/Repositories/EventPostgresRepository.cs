@@ -23,4 +23,18 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     {
         await context.Events.AddAsync(eventEntity, cancellationToken);
     }
+
+    public Task DeleteEventAsync(Event @event)
+    {
+        context.Events.Remove(@event);
+        return Task.CompletedTask;
+    }
+
+    public async Task<Event> GetEventByIdAsync(Guid id)
+        => await context.Events.SingleOrDefaultAsync(x => x.Id == id);
+
+    public async Task DeleteEventByIdAsync(Guid id)
+    {
+        await context.Events.Where(x => x.Id == id).ExecuteDeleteAsync();
+    }
 }
