@@ -5,6 +5,7 @@ namespace EventMarketplace.Application.Patterns;
 public interface IUnitOfWork : IDisposable
 {
     IUserRepository Users { get; }
+    IEventRepository Events { get; }
     Task BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task RollbackAsync(CancellationToken cancellationToken = default);
     Task CommitAsync(CancellationToken cancellationToken = default);

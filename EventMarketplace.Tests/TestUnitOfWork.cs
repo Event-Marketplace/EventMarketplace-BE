@@ -8,7 +8,8 @@ namespace EventMarketplace.Tests;
 public class TestUnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsyncDisposable
 {
     public IUserRepository Users => new UserPostgresRepository(context);
-    
+    public IEventRepository Events => new EventPostgresRepository(context);
+
     public Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         => Task.CompletedTask;
 

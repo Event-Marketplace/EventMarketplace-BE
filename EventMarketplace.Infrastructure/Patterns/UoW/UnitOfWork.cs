@@ -10,8 +10,8 @@ public class UnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsync
 
     private IDbContextTransaction _transaction;
 
-
     public IUserRepository Users { get; } = new UserPostgresRepository(context);
+    public IEventRepository Events { get; } = new EventPostgresRepository(context);
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {

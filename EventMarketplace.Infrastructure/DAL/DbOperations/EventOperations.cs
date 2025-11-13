@@ -23,13 +23,13 @@ public static class EventOperations
         
         if (query.StartDate.HasValue && query.EndDate.HasValue)
         {
-            response = response.Where(x => x.StartDate >= query.StartDate && x.EndDate <= query.EndDate);
+            response = response.Where(x => x.DurationOfTheEvent.StartEvent >= query.StartDate && x.DurationOfTheEvent.EndEvent <= query.EndDate);
         }else if (query.StartDate.HasValue && !query.EndDate.HasValue)
         {
-            response = response.Where(x => x.StartDate >= query.StartDate);
+            response = response.Where(x => x.DurationOfTheEvent.StartEvent >= query.StartDate);
         }else if (!query.StartDate.HasValue && query.EndDate.HasValue)
         {
-            response = response.Where(x => x.EndDate <= query.EndDate);
+            response = response.Where(x => x.DurationOfTheEvent.EndEvent <= query.EndDate);
         }
 
         //price scope
