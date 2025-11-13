@@ -37,4 +37,10 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     {
         await context.Events.Where(x => x.Id == id).ExecuteDeleteAsync();
     }
+
+    public Task UpdateEventAsync(Event @event)
+    {
+        context.Events.Update(@event);
+        return Task.CompletedTask;
+    }
 }

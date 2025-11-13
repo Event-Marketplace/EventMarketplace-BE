@@ -21,6 +21,13 @@ public record DurationOfTheEvent
         return new DurationOfTheEvent(startEvent, endEvent);
     }
 
+    public DurationOfTheEvent Update(DateTime? start, DateTime? end)
+    {
+        var newStart = start ?? StartEvent;
+        var newEnd = end ?? EndEvent;
+        return new DurationOfTheEvent(newStart, newEnd);
+    }
+
     public override string ToString()
     {
         return $"{StartEvent} - {EndEvent}";

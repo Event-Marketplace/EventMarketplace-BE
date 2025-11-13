@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using DotNetEnv;
 using EventMarketplace.Application;
+using EventMarketplace.Application.Mapper;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.Middleware;
 using EventMarketplace.Utils;
@@ -20,6 +21,8 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(EventProfile).Assembly);
 
 var currentDirectory = Directory.GetCurrentDirectory();
 var parentDirectory = Directory.GetParent(currentDirectory)?.FullName;

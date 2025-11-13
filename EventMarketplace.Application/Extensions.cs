@@ -1,7 +1,9 @@
 using System.Text;
+using AutoMapper;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Abstract;
 using EventMarketplace.Application.Abstract.Dispatchers;
+using EventMarketplace.Application.Mapper;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;

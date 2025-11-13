@@ -25,4 +25,15 @@ public class BlobStorageService(BlobServiceClient serviceClient) : IBlobStorageS
 
         return blobClient.Uri.ToString();
     }
+
+    public async Task<string> UploadOrReplaceFileAsync(IFormFile file, string imageName, string containerName, CancellationToken cancellationToken)
+    {
+        var container = serviceClient.GetBlobContainerClient(containerName);
+        var blobClient = container.GetBlobClient(imageName);
+        
+        await using var stream = file.OpenReadStream();
+        await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: cancellationToken);
+
+        return blobClient.Uri.ToString();
+    }
 }
