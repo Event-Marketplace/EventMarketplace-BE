@@ -19,6 +19,12 @@ namespace EventMarketplace.Controllers
             return Ok(await queryDispatcher.QueryAsync<GetEventsQuery, EventListResponse>(query));
         }
 
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetEvent([FromRoute] Guid id)
+        {
+            return Ok();
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddNewEvent([FromForm] CreateEventDto Dto)
@@ -27,5 +33,6 @@ namespace EventMarketplace.Controllers
             await commandDispatcher.SendAsync(command);
             return Created();
         }
+        
     }
 }
