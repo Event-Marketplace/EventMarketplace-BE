@@ -22,7 +22,7 @@ namespace EventMarketplace.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
         {
-            return Ok();
+            return Ok(await queryDispatcher.QueryAsync<GetEventQuery,EventResponse>(new GetEventQuery(){EventId = id}));
         }
 
         [Authorize]
