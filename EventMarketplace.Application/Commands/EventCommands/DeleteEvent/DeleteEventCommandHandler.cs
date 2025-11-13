@@ -15,6 +15,8 @@ public class DeleteEventCommandHandler(IUnitOfWork unitOfWork) : ICommandHandler
         {
             var eventToDelete = await unitOfWork.Events.GetEventByIdAsync(command.EventId) 
                                 ?? throw new AppException("Brak wydarzenia o podanym id w bazie danych.");
+
+            if (eventToDelete.IsActive) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
             
             await unitOfWork.Events.DeleteEventAsync(eventToDelete);
             await unitOfWork.CommitAsync(cancellationToken);
