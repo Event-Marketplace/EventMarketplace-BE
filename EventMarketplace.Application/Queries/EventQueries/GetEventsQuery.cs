@@ -1,9 +1,10 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Application.Response.EventResponse;
+using MediatR;
 
 namespace EventMarketplace.Application.Queries;
 
-public sealed class GetEventsQuery : IQuery<EventListResponse>
+public sealed class GetEventsQuery : IRequest<EventListResponse>
 {
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }

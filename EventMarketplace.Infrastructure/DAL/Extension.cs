@@ -1,4 +1,4 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Infrastructure.Crons;
 using EventMarketplace.Infrastructure.DAL.Repositories;
@@ -25,14 +25,6 @@ public static class Extension
         {
             options.UseNpgsql(connectionString);
         });
-        
-        var infrastructureAssembly = typeof(EventMarketplaceDbContext).Assembly;
-        
-        services.Scan(scan => scan.FromAssemblies(infrastructureAssembly)
-            .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
         
         services.AddScoped<IUserRepository, UserPostgresRepository>();
         services.AddScoped<IEventRepository, EventPostgresRepository>();

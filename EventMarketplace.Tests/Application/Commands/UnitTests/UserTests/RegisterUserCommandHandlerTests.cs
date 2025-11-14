@@ -55,7 +55,7 @@ public class RegisterUserCommandHandlerTests
         );
         
         //act
-        Func<Task> action = () =>  _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        Func<Task> action = () =>  _handler.Handle(command, CancellationToken.None);
 
         //assert
         await Assert.ThrowsAsync<AppException>(action);
@@ -79,7 +79,7 @@ public class RegisterUserCommandHandlerTests
             }
         );
         //act
-        Func<Task> action = () => _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
 
         //asserts
         await Assert.ThrowsAsync<AppException>(action);
@@ -106,7 +106,7 @@ public class RegisterUserCommandHandlerTests
                 IsOrganizerAccount = false
             });
 
-        await _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        await _handler.Handle(command, CancellationToken.None);
         
         _userRepo.Verify(x => x.AddUserAsync(It.IsAny<User>()), Times.Once);
         _passwordManager.Verify(x => x.HashPassword("password"), Times.Once);

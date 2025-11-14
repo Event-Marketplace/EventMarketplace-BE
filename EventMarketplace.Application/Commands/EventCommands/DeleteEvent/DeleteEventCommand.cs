@@ -1,5 +1,7 @@
-using EventMarketplace.Application.Abstract;
+
+
+using MediatR;
 
 namespace EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 
-public sealed record DeleteEventCommand(Guid EventId) : ICommand;
+public sealed record DeleteEventCommand(Guid EventId) : IRequest;

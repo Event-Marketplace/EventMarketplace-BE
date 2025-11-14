@@ -36,7 +36,7 @@ public class RegisterUserCommandHandlerIntegrationTests
         });
 
         //act
-        await handler.ExecuteHandleAsync(command, CancellationToken.None);
+        await handler.Handle(command, CancellationToken.None);
         
         //asserts
         var userInDb = await context.Users.FirstOrDefaultAsync(x => x.EmailAddress.Value.Equals("test@wp.pl"));

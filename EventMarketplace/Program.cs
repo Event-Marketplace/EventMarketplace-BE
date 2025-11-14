@@ -2,8 +2,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using DotNetEnv;
 using EventMarketplace.Application;
+using EventMarketplace.Application.Commands.EventCommands.Handlers;
 using EventMarketplace.Application.Mapper;
 using EventMarketplace.Infrastructure;
+using EventMarketplace.Infrastructure.DAL.QueryHandlers;
 using EventMarketplace.Infrastructure.Middleware;
 using EventMarketplace.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,6 +33,12 @@ if (parentDirectory != null)
     var envFilePath = Path.Combine(parentDirectory, ".env");
     Env.Load(envFilePath);
 }
+
+builder.Services.AddMediatR(conf =>
+{
+    conf.RegisterServicesFromAssembly(typeof(CreateEventCommandHandler).Assembly);
+    conf.RegisterServicesFromAssembly(typeof(GetEventQueryHandler).Assembly);
+});
 
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure();

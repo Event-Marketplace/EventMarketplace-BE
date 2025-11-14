@@ -1,37 +1,35 @@
 using AutoMapper;
-using Azure.Storage.Blobs;
-using EventMarketplace.Application.Abstract;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils.Azure;
-using EventMarketplace.Domain.ValueObjects;
+using MediatR;
 
 namespace EventMarketplace.Application.Commands.EventCommands.EditEvent;
 
 public class EditEventCommandHandler(
     IUnitOfWork unitOfWork, 
     IMapper mapper, 
-    IBlobStorageService storageService) : ICommandHandler<EditEventCommand>
+    IBlobStorageService storageService) : IRequestHandler<EditEventCommand>
 {
-    public async Task ExecuteHandleAsync(EditEventCommand command, CancellationToken cancellationToken = default)
+    public async Task Handle(EditEventCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var eventToUdpate = await unitOfWork.Events.GetEventByIdAsync(command.Dto.Id) 
+            var eventToUdpate = await unitOfWork.Events.GetEventByIdAsync(request.Dto.Id) 
                                 ?? throw new AppException("Brak danego wydarzenia w bazie danych.");
 
-            mapper.Map(command.Dto, eventToUdpate);
+            mapper.Map(request.Dto, eventToUdpate);
             
             eventToUdpate.DurationOfTheEvent =
-                eventToUdpate.DurationOfTheEvent.Update(command.Dto.StartDateTime, command.Dto.EndDateTime);
+                eventToUdpate.DurationOfTheEvent.Update(request.Dto.StartDateTime, request.Dto.EndDateTime);
             
-            if (command.Dto.Image != null)
+            if (request.Dto.Image != null)
             {
                 var imageStrings = eventToUdpate.ImageUrl.Split('/');
                 
-                var uri = await storageService.UploadOrReplaceFileAsync(command.Dto.Image, imageStrings.Last(), "events",
+                var uri = await storageService.UploadOrReplaceFileAsync(request.Dto.Image, imageStrings.Last(), "events",
                     cancellationToken);
                 
                 eventToUdpate.ImageUrl = uri;
