@@ -17,8 +17,9 @@ public static class Extension
         var database = Environment.GetEnvironmentVariable("POSTGRES_DB");
         var username = Environment.GetEnvironmentVariable("POSTGRES_USER");
         var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+        var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 
-        var connectionString = $"Host=localhost;Port={port};Database={database};Username={username};Password={password}";
+        var connectionString = $"Host={dbHost};Port={port};Database={database};Username={username};Password={password}";
         
         services.AddDbContext<EventMarketplaceDbContext>(options =>
         {
