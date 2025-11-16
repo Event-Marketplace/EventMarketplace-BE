@@ -1,15 +1,12 @@
 using System.Security.Claims;
-using EventMarketplace.Application.Abstract;
-using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Domain.Entities;
-using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Domain.ValueObjects;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace EventMarketplace.Application.Commands.EventCommands.Handlers;
 
@@ -17,9 +14,9 @@ public class CreateEventCommandHandler(
     IHttpContextAccessor contextAccessor,
     IUnitOfWork unitOfWork,
     IBlobStorageService blobStorageService,
-    ILogger<CreateEventCommandHandler> logger) : ICommandHandler<CreateEventCommand>
+    ILogger<CreateEventCommandHandler> logger) : IRequestHandler<CreateEventCommand>
 {
-    public async Task ExecuteHandleAsync(CreateEventCommand command, CancellationToken cancellationToken = default)
+    public async Task Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -33,16 +30,16 @@ public class CreateEventCommandHandler(
             logger.LogInformation($"Rozpoczęcie procesu dodania nowego wydarzenia przez - {loggedOrganizer.FindFirst(ClaimTypes.Email)}");
 
             var uploadAndReturnUriFromAzure =
-                await blobStorageService.UploadFileAsync(command.Dto.Image, "events", cancellationToken);
+                await blobStorageService.UploadFileAsync(request.Dto.Image, "events", cancellationToken);
             
             var newEvent = new Event()
             {
                 Id = Guid.CreateVersion7(),
-                Title = command.Dto.Title,
-                Description = command.Dto.Description,
-                Price = command.Dto.Price,
-                AvailableTickets = command.Dto.AvailableTicketsCount,
-                DurationOfTheEvent = DurationOfTheEvent.Create(command.Dto.StartDateTime, command.Dto.EndDateTime),
+                Title = request.Dto.Title,
+                Description = request.Dto.Description,
+                Price = request.Dto.Price,
+                AvailableTickets = request.Dto.AvailableTicketsCount,
+                DurationOfTheEvent = DurationOfTheEvent.Create(request.Dto.StartDateTime, request.Dto.EndDateTime),
                 OrganizerId = Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
                 ImageUrl = uploadAndReturnUriFromAzure,
                 CreateAt = DateTime.UtcNow,

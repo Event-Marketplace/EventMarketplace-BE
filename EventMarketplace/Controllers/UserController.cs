@@ -1,8 +1,9 @@
-using EventMarketplace.Application.Abstract.Dispatchers;
+
 using EventMarketplace.Application.Commands.UserCommands;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.UserResponse;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,27 +12,26 @@ namespace EventMarketplace.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UserController(
-        ICommandDispatcher commandDispatcher,
-        IQueryDispatcher queryDispatcher
+        IMediator mediator
         ) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command)
         {
-            await commandDispatcher.SendAsync(command);
+            await mediator.Send(command);
             return NoContent();
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command)
         {
-            return Ok(await commandDispatcher.SendAsync<LoginUserCommand, LoginUserResponse>(command));
+            return Ok(await mediator.Send(command));
         }
 
         [HttpGet("user-info")]
         public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
         {
-            return Ok(await queryDispatcher.QueryAsync<GetUserInfoQuery, GetUserInfoResponse>(query));
+            return Ok(await mediator.Send(query));
         }
         
     }

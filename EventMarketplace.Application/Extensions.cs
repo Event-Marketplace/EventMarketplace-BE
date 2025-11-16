@@ -1,15 +1,14 @@
 using System.Text;
-using AutoMapper;
 using Azure.Storage.Blobs;
-using EventMarketplace.Application.Abstract;
-using EventMarketplace.Application.Abstract.Dispatchers;
-using EventMarketplace.Application.Mapper;
-using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Behaviors;
+using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
+using EventMarketplace.Application.Commands.EventCommands.Handlers;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Application.Utils.Jwt;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -20,18 +19,7 @@ public static class Extensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Scan(scan => scan.FromAssembliesOf(typeof(ICommandHandler<>))
-            .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)))
-                .AsImplementedInterfaces()
-                .WithTransientLifetime()
-            .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
-                .AsImplementedInterfaces()
-                .WithTransientLifetime()
-           );
-
         services.AddScoped<IPasswordManager, PasswordManager>();
-        services.AddScoped<ICommandDispatcher, CommandDispatcher>();
-        services.AddScoped<IQueryDispatcher, QueryDispatcher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddHttpContextAccessor();
         
@@ -80,6 +68,9 @@ public static class Extensions
             
         var azureBlobConnString = $"DefaultEndpointsProtocol={protocol};AccountName={accountName};AccountKey={accountKey};EndpointSuffix={endpointSuffix}";
         services.AddSingleton(new BlobServiceClient(azureBlobConnString));
+
+        services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
        
         return services;
     }

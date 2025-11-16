@@ -1,9 +1,10 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.ValueObjects;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
@@ -13,30 +14,30 @@ public sealed class RegisterUserCommandHandler(
     IUnitOfWork unitOfWork, 
     IPasswordManager passwordManager,
     ILogger<RegisterUserCommandHandler> logger
-    ) : ICommandHandler<RegisterUserCommand>
+    ) : IRequestHandler<RegisterUserCommand>
 {
-    public async Task ExecuteHandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
+    public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            if (await unitOfWork.Users.CheckBusyEmail(command.Dto.Email))
+            if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
                 throw new AppException("Ten adres email jest już zajęty.");
             
-            var email = EmailAddress.Create(command.Dto.Email);
+            var email = EmailAddress.Create(request.Dto.Email);
             
             var newUser = new User()
             {
                 EmailAddress = email,
                 CreateAt = DateTime.UtcNow,
-                IsOrganizerAccount = command.Dto.IsOrganizerAccount
+                IsOrganizerAccount = request.Dto.IsOrganizerAccount
             };
 
-            if (!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
+            if (!request.Dto.Password.Equals(request.Dto.ConfirmPassword))
                 throw new AppException("Wprowadzone hasła nie są jednakowe.");
             
-            var hashedPassword = passwordManager.HashPassword(command.Dto.Password);
+            var hashedPassword = passwordManager.HashPassword(request.Dto.Password);
             newUser.Password = hashedPassword;
             
             await unitOfWork.Users.AddUserAsync(newUser);

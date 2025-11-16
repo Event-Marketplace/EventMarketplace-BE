@@ -1,17 +1,35 @@
-﻿services:
-  eventmarketplace:
-    image: eventmarketplace
+version: '3.9'
+
+services:
+  backend:
     build:
       context: .
       dockerfile: EventMarketplace/Dockerfile
+    container_name: eventmarketplace-be
+    env_file:
+      - .env.docker
     ports:
       - "5100:8080"
-      - "5101:8081"
-    depends_on:
-      - db
+    volumes:
+      - dpkeys:/root/.aspnet/DataProtection-Keys
     environment:
       ConnectionStrings_DefaultConnection: "Host=db;Port=${DB_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
-        
+      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=${DEFAULT_PROTOCOL};AccountName=${ACCOUNT_NAME};AccountKey=${ACCOUNT_KEY};EndpointSuffix=${ENDPOINT_SUFFIX}"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ../../Frontend/eventmarketplace
+      dockerfile: Dockerfile
+    container_name: eventmarketplace-fe
+    env_file:
+      - ../../Frontend/eventmarketplace/.env.docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
   db:
     image: postgres:15
     container_name: postgres-db
@@ -23,6 +41,7 @@
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      
+
 volumes:
   pgdata:
+  dpkeys:

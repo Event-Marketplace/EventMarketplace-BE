@@ -1,15 +1,16 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.UserResponse;
 using EventMarketplace.Domain.Repositories;
+using MediatR;
 
 namespace EventMarketplace.Infrastructure.DAL.QueryHandlers;
 
-public sealed class GetUserInfoQueryHandler(IUserRepository userRepository) : IQueryHandler<GetUserInfoQuery, GetUserInfoResponse>
+public sealed class GetUserInfoQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserInfoQuery, GetUserInfoResponse>
 {
-    public async Task<GetUserInfoResponse> ExecuteHandleAsync(GetUserInfoQuery query, CancellationToken cancellationToken)
+    public async Task<GetUserInfoResponse> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.GetUserByEmailAsync(query.Email) ?? throw new ApplicationException("Nie znaleziono użytkownika o danym adresie e-mail");
+        var user = await userRepository.GetUserByEmailAsync(request.Email) ?? throw new ApplicationException("Nie znaleziono użytkownika o danym adresie e-mail");
 
         return new GetUserInfoResponse()
         {

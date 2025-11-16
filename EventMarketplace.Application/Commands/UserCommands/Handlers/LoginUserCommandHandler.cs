@@ -1,9 +1,10 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Jwt;
+using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace EventMarketplace.Application.Commands.UserCommands.Handlers;
@@ -13,18 +14,18 @@ public class LoginUserCommandHandler(
     IPasswordManager passwordManager, 
     ILogger<LoginUserCommandHandler> logger,
     IJwtProvider jwtProvider
-    ) : ICommandHandler<LoginUserCommand, LoginUserResponse>
+    ) : IRequestHandler<LoginUserCommand, LoginUserResponse>
 {
-    public async Task<LoginUserResponse> ExecuteHandleAsync(LoginUserCommand command, CancellationToken cancellationToken)
+    public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var userFromDb = await unitOfWork.Users.GetUserByEmailAsync(command.Dto.Email) ??
+            var userFromDb = await unitOfWork.Users.GetUserByEmailAsync(request.Dto.Email) ??
                              throw new AppException("Użytkownik o podanym mailu nie istnieje w naszej bazie.");
 
-            if (!passwordManager.ValidPassword(command.Dto.Password, userFromDb.Password))
+            if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
                 throw new AppException("Podane hasło jest nieprawidłowe.");
             
             await unitOfWork.CommitAsync(cancellationToken);

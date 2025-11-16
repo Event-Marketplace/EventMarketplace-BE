@@ -56,7 +56,7 @@ public class LoginUserCommandHandlerTests
             });
         
         //act
-        Func<Task> action = () => _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
         
         //asserts
         await Assert.ThrowsAsync<AppException>(action);
@@ -80,7 +80,7 @@ public class LoginUserCommandHandlerTests
         _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string plain, string hashed) => plain == hashed);
         
-        Func<Task> action = () => _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
 
         await Assert.ThrowsAsync<AppException>(action);
         _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -112,7 +112,7 @@ public class LoginUserCommandHandlerTests
                 Password = password
             });
         //act
-        var result = await  _handler.ExecuteHandleAsync(command, CancellationToken.None);
+        var result = await  _handler.Handle(command, CancellationToken.None);
         
         //asserts
         Assert.Equal(token, result.TokenJwt);

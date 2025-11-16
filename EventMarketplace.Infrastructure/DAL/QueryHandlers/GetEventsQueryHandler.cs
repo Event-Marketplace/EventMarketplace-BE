@@ -1,22 +1,23 @@
-using EventMarketplace.Application.Abstract;
+
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Infrastructure.DAL.DbOperations;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventMarketplace.Infrastructure.DAL.QueryHandlers;
 
-public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : IQueryHandler<GetEventsQuery, EventListResponse>
+public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : IRequestHandler<GetEventsQuery, EventListResponse>
 {
-    public async Task<EventListResponse> ExecuteHandleAsync(GetEventsQuery query, CancellationToken cancellationToken)
+    public async Task<EventListResponse> Handle(GetEventsQuery request, CancellationToken cancellationToken)
     {
         var events = context.Events
             .Where(x => x.IsActive)
-            .FilterEvents(query)
+            .FilterEvents(request)
             .OrderBy(x => x.DurationOfTheEvent.StartEvent);
             
         var paginatedResult = await events
-            .PaginationEvents(query)
+            .PaginationEvents(request)
             .ToListAsync(cancellationToken: cancellationToken);
 
         return new EventListResponse()
