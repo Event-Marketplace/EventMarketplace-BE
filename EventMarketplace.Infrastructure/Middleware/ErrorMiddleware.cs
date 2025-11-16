@@ -25,6 +25,21 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
             var json = JsonSerializer.Serialize(response);
             await context.Response.WriteAsync(json);
         }
+        catch (FluentValidation.ValidationException ex)
+        {
+            logger.LogWarning($"Błędy walidacji: {string.Join(", ", ex.Errors.Select(e => e.ErrorMessage))}");
+    
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            context.Response.ContentType = "application/json";
+
+            var response = new
+            {
+                errors = ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
+            };
+    
+            var json = JsonSerializer.Serialize(response);
+            await context.Response.WriteAsync(json);
+        }
         catch (Exception ex)
         {
             logger.LogWarning($"Nieoczekiwany bład serwera - {ex.Message}");

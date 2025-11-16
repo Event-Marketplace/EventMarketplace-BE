@@ -1,6 +1,7 @@
 using System.Text;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
+using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
@@ -68,7 +69,7 @@ public static class Extensions
         var azureBlobConnString = $"DefaultEndpointsProtocol={protocol};AccountName={accountName};AccountKey={accountKey};EndpointSuffix={endpointSuffix}";
         services.AddSingleton(new BlobServiceClient(azureBlobConnString));
 
-        services.AddValidatorsFromAssemblyContaining<CreateEventCommandHandler>();
+        services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
        
         return services;
