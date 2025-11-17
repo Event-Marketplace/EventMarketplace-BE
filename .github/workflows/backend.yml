@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t event-marketplace/eventmarketplace-be:dev ./EventMarketplace
+        run: docker build -t event-marketplace/eventmarketplace-be:dev .
 
       - name: Push Docker image
         run: docker push event-marketplace/eventmarketplace-be:dev
