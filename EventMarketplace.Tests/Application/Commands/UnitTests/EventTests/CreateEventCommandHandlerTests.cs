@@ -3,6 +3,7 @@ using Castle.Core.Logging;
 using EventMarketplace.Application.Commands.EventCommands;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
 using EventMarketplace.Application.Dtos.EventDtos;
+using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Domain.Entities;
@@ -93,5 +94,32 @@ public class CreateEventCommandHandlerTests
         _eventRepo.Verify(x => x.AddEventAsync(It.IsAny<Event>(), It.IsAny<CancellationToken>()), Times.Once);
         _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()),Times.Once);
     }
-    
+
+    [Fact]
+    public async Task Should_Throw_When_User_Is_Not_Logged_In()
+    {   
+        //arrange
+        _httpContextAccessor.Setup(x => x.HttpContext.User.Identity.IsAuthenticated).Returns(false);
+        
+        var dto = new CreateEventDto()
+        {
+            Title = "string",
+            Description = "description",
+            Price = 3.4,
+            Image = new FormFile(Stream.Null, 0, 0, "file", "file.jpg"),
+            AvailableTicketsCount = 210,
+            StartDateTime = DateTime.UtcNow.AddDays(1),
+            EndDateTime = DateTime.UtcNow.AddDays(3),
+        };
+
+        var command = new CreateEventCommand(dto);
+        
+        //act
+        Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
+        
+        //asserts
+        await Assert.ThrowsAsync<AppException>(action);
+        _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
 }
