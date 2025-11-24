@@ -1,7 +1,11 @@
+using System.Security.Claims;
 using Castle.Core.Logging;
+using EventMarketplace.Application.Commands.EventCommands;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
+using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils.Azure;
+using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -45,12 +49,49 @@ public class CreateEventCommandHandlerTests
     public async Task CreatedSuccess_WhenData_IsValid()
     {
         //arrange
+        var claims = new List<Claim>()
+        {
+            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.Email, "test@o2.pl")
+        };
+
+        var identity = new ClaimsIdentity(claims, "TestAuth");
+        var user = new ClaimsPrincipal(identity);
+            
+        var context = new DefaultHttpContext();
+        context.User = user;
+
+        _httpContextAccessor.Setup(x => x.HttpContext).Returns(context);
         
-        
+        _blobStorageService.Setup(x =>
+            x.UploadFileAsync(
+                It.IsAny<IFormFile>(), 
+                It.IsAny<string>(), 
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync("fakeurifromazure.jpg");
+
+        _eventRepo.Setup(x => x.AddEventAsync(It.IsAny<Event>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var dto = new CreateEventDto()
+        {
+            Title = "string",
+            Description = "description",
+            Price = 3.4,
+            Image = new FormFile(Stream.Null, 0, 0, "file", "file.jpg"),
+            AvailableTicketsCount = 210,
+            StartDateTime = DateTime.UtcNow.AddDays(1),
+            EndDateTime = DateTime.UtcNow.AddDays(3),
+        };
+
+        var command = new CreateEventCommand(dto);
+
         //act
-        
-    
+        await _handler.Handle(command, CancellationToken.None);
+
         //asserts
+        _eventRepo.Verify(x => x.AddEventAsync(It.IsAny<Event>(), It.IsAny<CancellationToken>()), Times.Once);
+        _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()),Times.Once);
     }
     
 }

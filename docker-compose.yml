@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   backend:
+    image: ghcr.io/event-marketplace/eventmarketplace-be:dev
     build:
       context: .
       dockerfile: EventMarketplace/Dockerfile
@@ -19,6 +20,7 @@ services:
       - db
 
   frontend:
+    image: ghcr.io/event-marketplace/eventmarketplace-fe:dev
     build:
       context: ../../Frontend/eventmarketplace
       dockerfile: Dockerfile
