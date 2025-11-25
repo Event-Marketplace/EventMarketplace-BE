@@ -78,7 +78,6 @@ namespace EventMarketplace.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ReplacedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Revoked")

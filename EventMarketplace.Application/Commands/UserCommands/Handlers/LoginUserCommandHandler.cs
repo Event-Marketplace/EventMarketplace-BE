@@ -4,6 +4,7 @@ using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Jwt;
+using EventMarketplace.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -32,7 +33,14 @@ public class LoginUserCommandHandler(
             var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
             
             jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
-            
+            await unitOfWork.AuthRepo.AddNewRefreshTokenAsync(new RefreshToken()
+            {
+                Value = refreshToken.RefreshToken,
+                Expires = refreshToken.Expires,
+                Revoked = false,
+                CreateAt = DateTime.UtcNow,
+                UserId = userFromDb.Id
+            });
             
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");

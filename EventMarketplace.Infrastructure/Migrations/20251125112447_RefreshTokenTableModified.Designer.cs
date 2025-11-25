@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventMarketplace.Infrastructure.Migrations
 {
     [DbContext(typeof(EventMarketplaceDbContext))]
-    [Migration("20251125110700_RefreshTokenTableModified")]
+    [Migration("20251125112447_RefreshTokenTableModified")]
     partial class RefreshTokenTableModified
     {
         /// <inheritdoc />
@@ -81,7 +81,6 @@ namespace EventMarketplace.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ReplacedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Revoked")
