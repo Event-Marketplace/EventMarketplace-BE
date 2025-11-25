@@ -27,14 +27,21 @@ public class LoginUserCommandHandler(
 
             if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
                 throw new AppException("Podane hasło jest nieprawidłowe.");
+
+            var jwtToken = jwtProvider.GenerateToken(userFromDb);
+            var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
+            
+            jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
+            
             
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");
-
+            
             return new LoginUserResponse()
             {
-                TokenJwt = jwtProvider.GenerateToken(userFromDb)
+                TokenJwt = jwtToken
             };
+         
         }
         catch (Exception e)
         {
