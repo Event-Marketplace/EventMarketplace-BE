@@ -5,4 +5,4 @@ using MediatR;
 
 namespace EventMarketplace.Application.Commands.UserCommands;
 
-public sealed record LoginUserCommand(LoginUserDto Dto) : IRequest<LoginUserResponse>;
+public sealed record LoginUserCommand(LoginUserDto Dto) : IRequest<JwtTokenResponse>;

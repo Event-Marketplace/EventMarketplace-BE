@@ -15,9 +15,9 @@ public class LoginUserCommandHandler(
     IPasswordManager passwordManager, 
     ILogger<LoginUserCommandHandler> logger,
     IJwtProvider jwtProvider
-    ) : IRequestHandler<LoginUserCommand, LoginUserResponse>
+    ) : IRequestHandler<LoginUserCommand, JwtTokenResponse>
 {
-    public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<JwtTokenResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -45,7 +45,7 @@ public class LoginUserCommandHandler(
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");
             
-            return new LoginUserResponse()
+            return new JwtTokenResponse()
             {
                 TokenJwt = jwtToken
             };

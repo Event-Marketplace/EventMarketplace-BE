@@ -15,6 +15,12 @@ namespace EventMarketplace.Controllers
         IMediator mediator
         ) : ControllerBase
     {
+        [HttpGet("user-info")]
+        public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
+        {
+            return Ok(await mediator.Send(query));
+        }
+        
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command)
         {
@@ -28,17 +34,17 @@ namespace EventMarketplace.Controllers
             return Ok(await mediator.Send(command));
         }
 
-        [HttpGet("user-info")]
-        public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
-        {
-            return Ok(await mediator.Send(query));
-        }
-
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutUser()
         {
             await mediator.Send(new LogoutUserCommand());
             return NoContent();
+        }
+
+        [HttpPost("auth-refresh")]
+        public async Task<IActionResult> RegenerateTokens()
+        {
+            return Ok(await mediator.Send(new RegenerateTokensCommand()));
         }
         
     }
