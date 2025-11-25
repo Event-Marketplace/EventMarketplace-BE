@@ -60,6 +60,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseRateLimiter();
 app.UseCors("FE");
 app.UseAuthentication();
 app.UseAuthorization();

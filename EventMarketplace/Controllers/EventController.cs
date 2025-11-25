@@ -16,7 +16,6 @@ namespace EventMarketplace.Controllers
     [ApiController]
     public class EventController(IMediator mediator) : ControllerBase
     {
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllEvents([FromQuery] GetEventsQuery query)
         {

@@ -6,6 +6,7 @@ using EventMarketplace.Application.Response.UserResponse;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace EventMarketplace.Controllers
 {
@@ -41,6 +42,7 @@ namespace EventMarketplace.Controllers
             return NoContent();
         }
 
+        [EnableRateLimiting("RegenerateTokensPolicy")]
         [HttpPost("auth-refresh")]
         public async Task<IActionResult> RegenerateTokens()
         {
