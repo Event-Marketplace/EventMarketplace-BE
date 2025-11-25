@@ -69,7 +69,26 @@ public class JwtProvider(IHttpContextAccessor contextAccessor) : IJwtProvider
         
         contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookiesOptions);
     }
-    
+
+    public string GetRefreshTokenFromCookies()
+    {
+        CheckUserSessionExist();
+        var refreshToken = contextAccessor.HttpContext.Request.Cookies["refreshToken"] 
+                           ?? throw new AppException("Brak refresh token'a");
+
+        return refreshToken;
+    }
+
+    public void SetNullRefreshTokenInCookies()
+    {
+        contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", "", new CookieOptions()
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        });
+    }
+
     private void CheckUserSessionExist()
     {
         if (contextAccessor.HttpContext == null) throw new AppException("Brak sesji użytkownika.");

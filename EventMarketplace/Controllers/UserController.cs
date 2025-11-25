@@ -33,6 +33,13 @@ namespace EventMarketplace.Controllers
         {
             return Ok(await mediator.Send(query));
         }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutUser()
+        {
+            await mediator.Send(new LogoutUserCommand());
+            return NoContent();
+        }
         
     }
 }
