@@ -18,27 +18,14 @@ public class RegenerateTokensCommandHandler(IUnitOfWork unitOfWork, IJwtProvider
             var refreshToken = jwtProvider.GetRefreshTokenFromCookies();
             var refreshFromDb = await unitOfWork.AuthRepo.GetEntityByRefreshTokenValue(refreshToken) 
                                 ?? throw new AppException("Brak refresh token'a w bazie danych.");
+
+            if (refreshFromDb.Expires < DateTime.UtcNow) throw new Exception("Refresh token wygasł.");
             
             var loggedUser = await unitOfWork.Users.GetUserByIdAsync(refreshFromDb.UserId) 
                              ?? throw new AppException("Brak zalogowanego użytkownika w bazie danych.");
             
             var jwtToken = jwtProvider.GenerateToken(loggedUser);
-            var newRefreshToken = jwtProvider.GenerateRefreshToken(loggedUser);
             
-            refreshFromDb.Revoked = true;
-            refreshFromDb.RevokedAt = DateTime.UtcNow;
-            
-            await unitOfWork.AuthRepo.UpdateRefreshTokenEntity(refreshFromDb);
-            await unitOfWork.AuthRepo.AddNewRefreshTokenAsync(new RefreshToken()
-            {
-                Value = newRefreshToken.RefreshToken,
-                Expires = newRefreshToken.Expires,
-                Revoked = false,
-                CreateAt = DateTime.UtcNow,
-                UserId = loggedUser.Id
-            });
-
-            jwtProvider.AppendRefreshToken(newRefreshToken.RefreshToken);
             await unitOfWork.CommitAsync(cancellationToken);
 
             return new JwtTokenResponse()
