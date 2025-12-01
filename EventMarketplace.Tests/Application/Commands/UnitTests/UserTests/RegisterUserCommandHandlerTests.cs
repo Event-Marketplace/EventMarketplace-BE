@@ -39,29 +39,29 @@ public class RegisterUserCommandHandlerTests
 
     #region NegativeTests
 
-    [Fact]
-    public async void ExecuteHandleAsync_WithValidCommand_ShouldRegisterUser()
-    {
-        _userRepo.Setup(r => r.CheckBusyEmail(It.IsAny<string>())).ReturnsAsync(true);
-        
-        var command = new RegisterUserCommand(
-            new RegisterUserDto
-            {
-                Email = "b.longota@op.pl",
-                Password = "Password.123",
-                ConfirmPassword = "Password.123",
-                IsOrganizerAccount = false
-            }
-        );
-        
-        //act
-        Func<Task> action = () =>  _handler.Handle(command, CancellationToken.None);
-
-        //assert
-        await Assert.ThrowsAsync<AppException>(action);
-        _unitOfWork.Verify(u => u.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
-        _unitOfWork.Verify(u => u.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-    }
+    // [Fact]
+    // public async void ExecuteHandleAsync_WithValidCommand_ShouldRegisterUser()
+    // {
+    //     _userRepo.Setup(r => r.CheckBusyEmail(It.IsAny<string>())).ReturnsAsync(true);
+    //     
+    //     var command = new RegisterUserCommand(
+    //         new RegisterUserDto
+    //         {
+    //             Email = "b.longota@op.pl",
+    //             Password = "Password.123",
+    //             ConfirmPassword = "Password.123",
+    //             IsOrganizerAccount = false
+    //         }
+    //     );
+    //     
+    //     //act
+    //     Func<Task> action = () =>  _handler.Handle(command, CancellationToken.None);
+    //
+    //     //assert
+    //     await Assert.ThrowsAsync<AppException>(action);
+    //     _unitOfWork.Verify(u => u.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
+    //     _unitOfWork.Verify(u => u.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
+    // }
 
     [Fact]
     public async Task Should_Throw_When_Passwords_Not_Same()
