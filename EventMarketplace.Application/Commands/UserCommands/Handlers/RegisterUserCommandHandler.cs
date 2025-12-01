@@ -3,6 +3,7 @@ using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -25,20 +26,15 @@ public sealed class RegisterUserCommandHandler(
             if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
                 throw new AppException("Ten adres email jest już zajęty.");
             
-            var email = EmailAddress.Create(request.Dto.Email);
-            
-            var newUser = new User()
-            {
-                EmailAddress = email,
-                CreateAt = DateTime.UtcNow,
-                IsOrganizerAccount = request.Dto.IsOrganizerAccount
-            };
+            var memberRole = await unitOfWork.RoleRepo.GetRoleByEnumAsync(RoleType.Member) 
+                             ?? throw new AppException($"Rola: {RoleType.Member.GetDisplayName()} nie istnieje w bazie danych.");
+            var newUser = User.CreateUser(request.Dto.Email);
+            newUser.AssignRole(memberRole);
 
             if (!request.Dto.Password.Equals(request.Dto.ConfirmPassword))
                 throw new AppException("Wprowadzone hasła nie są jednakowe.");
-            
-            var hashedPassword = passwordManager.HashPassword(request.Dto.Password);
-            newUser.Password = hashedPassword;
+
+            newUser.SetPassword(passwordManager.HashPassword(request.Dto.Password));
             
             await unitOfWork.Users.AddUserAsync(newUser);
             await unitOfWork.CommitAsync(cancellationToken);

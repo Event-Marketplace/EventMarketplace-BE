@@ -10,6 +10,7 @@ public class TestUnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IA
     public IUserRepository Users => new UserPostgresRepository(context);
     public IEventRepository Events => new EventPostgresRepository(context);
     public IAuthRepository AuthRepo => new AuthRepository(context);
+    public IRoleRepository RoleRepo => new RoleRepository(context);
 
     public Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         => Task.CompletedTask;

@@ -7,4 +7,15 @@ public class UserRole
 
     public Guid RoleId { get; set; }
     public Role Role { get; set; }
+
+    public static UserRole Create(User user, Role role)
+    {
+        return new UserRole()
+        {
+            UserId = user.Id,
+            RoleId = role.Id,
+            User = user,
+            Role = role
+        };
+    }
 }
