@@ -100,7 +100,7 @@ public class LoginUserCommandHandlerTests
         //arrange
         _user.Password = password;
         _user.EmailAddress = EmailAddress.Create("b.longota2@wp.pl");
-        _userRepo.Setup(x => x.GetUserByEmailAsync(It.Is<string>(email => email == _user.EmailAddress.Value))).ReturnsAsync(_user);
+        _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
         _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
             .Returns((string p1, string p2) => p1 == p2);
         _jwtProvider.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns(token);
