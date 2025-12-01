@@ -16,8 +16,8 @@ public class LogoutUserCommandHandler(IUnitOfWork unitOfWork, IJwtProvider jwtPr
             var refreshTokenEntity = await unitOfWork.AuthRepo.GetEntityByRefreshTokenValue(refreshTokenFromCookies) 
                                      ?? throw new Exception("Brak refresh token'a w bazie danych.");
 
-            refreshTokenEntity.Revoked = true;
-            refreshTokenEntity.RevokedAt = DateTime.UtcNow;
+            refreshTokenEntity.SetRevokedToken();
+            
             jwtProvider.SetNullRefreshTokenInCookies();
             await unitOfWork.AuthRepo.UpdateRefreshTokenEntity(refreshTokenEntity);
             

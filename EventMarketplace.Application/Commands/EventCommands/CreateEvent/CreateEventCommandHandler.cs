@@ -31,22 +31,14 @@ public class CreateEventCommandHandler(
 
             var uploadAndReturnUriFromAzure =
                 await blobStorageService.UploadFileAsync(request.Dto.Image, "events", cancellationToken);
-            
-            var newEvent = new Event()
-            {
-                Id = Guid.CreateVersion7(),
-                Title = request.Dto.Title,
-                Description = request.Dto.Description,
-                Price = request.Dto.Price,
-                AvailableTickets = request.Dto.AvailableTicketsCount,
-                DurationOfTheEvent = DurationOfTheEvent.Create(request.Dto.StartDateTime, request.Dto.EndDateTime),
-                OrganizerId = Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
-                ImageUrl = uploadAndReturnUriFromAzure,
-                CreateAt = DateTime.UtcNow,
-            };
+
+            var newEvent = Event.Create(request.Dto.Title, request.Dto.Description, request.Dto.Price,
+                request.Dto.AvailableTicketsCount, request.Dto.StartDateTime,
+                request.Dto.EndDateTime, Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
+                uploadAndReturnUriFromAzure);
 
             //problem z datami, w bazie mam infinity przez co ta flaga źle się setuje
-            newEvent.IsActive = newEvent.DurationOfTheEvent.StartEvent.Date >= DateTime.UtcNow.Date;
+            newEvent.SetIsActiveEvent();
 
             await unitOfWork.Events.AddEventAsync(newEvent, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);
