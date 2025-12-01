@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
@@ -9,6 +10,7 @@ using EventMarketplace.Application.Utils.Jwt;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -40,20 +42,12 @@ public static class Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtIssuer,
                     ValidAudience = jwtAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-                };
-                
-                // 🔹 Pozwala odczytać JWT z cookie zamiast z nagłówka
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        if (context.Request.Cookies.ContainsKey("access_token"))
-                        {
-                            context.Token = context.Request.Cookies["access_token"];
-                        }
-                        return Task.CompletedTask;
-                    }
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    ClockSkew = TimeSpan.Zero,
+                    IgnoreTrailingSlashWhenValidatingAudience = true,
+                    RequireExpirationTime = true,
+                    RequireAudience = true,
+                    RequireSignedTokens = true,
                 };
             });
 
@@ -71,6 +65,20 @@ public static class Extensions
 
         services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        
+        //ustawienie limitera
+        services.AddRateLimiter(opt =>
+        {
+            opt.AddPolicy("RegenerateTokensPolicy", context => RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "annonymous",
+                factory: _ => new FixedWindowRateLimiterOptions()
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 0
+                }));
+        });
        
         return services;
     }

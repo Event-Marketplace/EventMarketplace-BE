@@ -28,6 +28,7 @@ public static class Extension
         
         services.AddScoped<IUserRepository, UserPostgresRepository>();
         services.AddScoped<IEventRepository, EventPostgresRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddHostedService<EventMarketplaceInitializer>();
         
 

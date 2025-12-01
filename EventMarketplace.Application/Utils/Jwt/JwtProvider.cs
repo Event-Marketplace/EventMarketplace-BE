@@ -1,14 +1,17 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using EventMarketplace.Application.Exceptions;
+using EventMarketplace.Application.Response;
 using EventMarketplace.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EventMarketplace.Application.Utils.Jwt;
 
-public class JwtProvider : IJwtProvider
+public class JwtProvider(IHttpContextAccessor contextAccessor) : IJwtProvider
 {
     public string GenerateToken(User user)
     {
@@ -40,5 +43,54 @@ public class JwtProvider : IJwtProvider
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public RefreshTokenResponse GenerateRefreshToken(User user)
+    {
+        var bytes = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(bytes);
+
+        return new RefreshTokenResponse()
+        {
+            RefreshToken = Convert.ToBase64String(bytes),
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+    }
+
+    public void AppendRefreshToken(string refreshToken)
+    {
+        CheckUserSessionExist();
+        var cookiesOptions = new CookieOptions()
+        {
+            HttpOnly = true,
+            Secure = true
+        };
+        
+        contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookiesOptions);
+    }
+
+    public string GetRefreshTokenFromCookies()
+    {
+        CheckUserSessionExist();
+        var refreshToken = contextAccessor.HttpContext.Request.Cookies["refreshToken"] 
+                           ?? throw new AppException("Brak refresh token'a");
+
+        return refreshToken;
+    }
+
+    public void SetNullRefreshTokenInCookies()
+    {
+        contextAccessor.HttpContext.Response.Cookies.Append("refreshToken", "", new CookieOptions()
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddDays(-1)
+        });
+    }
+
+    private void CheckUserSessionExist()
+    {
+        if (contextAccessor.HttpContext == null) throw new AppException("Brak sesji użytkownika.");
     }
 }

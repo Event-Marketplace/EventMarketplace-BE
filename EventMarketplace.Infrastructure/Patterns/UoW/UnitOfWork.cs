@@ -12,6 +12,7 @@ public class UnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsync
 
     public IUserRepository Users { get; } = new UserPostgresRepository(context);
     public IEventRepository Events { get; } = new EventPostgresRepository(context);
+    public IAuthRepository AuthRepo { get; } = new AuthRepository(context);
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {

@@ -15,4 +15,5 @@ public class User : BaseEntity
     public Address Address { get; set; }
 
     public ICollection<Event> Events { get; set; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

@@ -1,6 +1,6 @@
 namespace EventMarketplace.Application.Response;
 
-public class LoginUserResponse
+public class JwtTokenResponse
 {
     public string TokenJwt { get; set; }
 }

@@ -4,6 +4,7 @@ using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Jwt;
+using EventMarketplace.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -14,9 +15,9 @@ public class LoginUserCommandHandler(
     IPasswordManager passwordManager, 
     ILogger<LoginUserCommandHandler> logger,
     IJwtProvider jwtProvider
-    ) : IRequestHandler<LoginUserCommand, LoginUserResponse>
+    ) : IRequestHandler<LoginUserCommand, JwtTokenResponse>
 {
-    public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<JwtTokenResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -27,14 +28,28 @@ public class LoginUserCommandHandler(
 
             if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
                 throw new AppException("Podane hasło jest nieprawidłowe.");
+
+            var jwtToken = jwtProvider.GenerateToken(userFromDb);
+            var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
+            
+            jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
+            await unitOfWork.AuthRepo.AddNewRefreshTokenAsync(new RefreshToken()
+            {
+                Value = refreshToken.RefreshToken,
+                Expires = refreshToken.Expires,
+                Revoked = false,
+                CreateAt = DateTime.UtcNow,
+                UserId = userFromDb.Id
+            });
             
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");
-
-            return new LoginUserResponse()
+            
+            return new JwtTokenResponse()
             {
-                TokenJwt = jwtProvider.GenerateToken(userFromDb)
+                TokenJwt = jwtToken
             };
+         
         }
         catch (Exception e)
         {

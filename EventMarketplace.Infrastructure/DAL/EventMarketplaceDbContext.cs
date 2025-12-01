@@ -7,6 +7,7 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
 {
    public DbSet<Event> Events { get; set; }
    public DbSet<User> Users { get; set; }
+   public DbSet<RefreshToken> RefreshTokens { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
@@ -22,12 +23,22 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          entity.HasKey(x => x.Id);
       });
 
+      modelBuilder.Entity<RefreshToken>(entity =>
+      {
+         entity.HasKey(x => x.Id);
+      });
+
       #region RelationsConfig
 
       modelBuilder.Entity<Event>()
          .HasOne(e => e.Organizer)
          .WithMany(u => u.Events)
          .HasForeignKey(e => e.OrganizerId);
+
+      modelBuilder.Entity<RefreshToken>()
+         .HasOne(r => r.User)
+         .WithMany(u => u.RefreshTokens)
+         .HasForeignKey(r => r.UserId);
 
       #endregion
 
