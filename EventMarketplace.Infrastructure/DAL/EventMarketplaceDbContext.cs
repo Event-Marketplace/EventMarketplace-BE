@@ -28,6 +28,11 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          entity.HasKey(x => x.Id);
       });
 
+      modelBuilder.Entity<UserRole>(entity =>
+      {
+         entity.HasKey(ur => new { ur.UserId, ur.RoleId });
+      });
+
       #region RelationsConfig
 
       modelBuilder.Entity<Event>()
@@ -39,6 +44,16 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          .HasOne(r => r.User)
          .WithMany(u => u.RefreshTokens)
          .HasForeignKey(r => r.UserId);
+
+      modelBuilder.Entity<UserRole>()
+         .HasOne(r => r.User)
+         .WithMany(u => u.UserRoles)
+         .HasForeignKey(r => r.UserId);
+      
+      modelBuilder.Entity<UserRole>()
+         .HasOne(r => r.Role)
+         .WithMany(u => u.UserRoles)
+         .HasForeignKey(r => r.RoleId);
 
       #endregion
 
