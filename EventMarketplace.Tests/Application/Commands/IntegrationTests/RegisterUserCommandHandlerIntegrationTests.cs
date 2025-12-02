@@ -3,6 +3,8 @@ using EventMarketplace.Application.Commands.UserCommands.Handlers;
 using EventMarketplace.Application.Dtos.UserDtos;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
+using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -22,6 +24,16 @@ public class RegisterUserCommandHandlerIntegrationTests
             .Options;
 
         await using var context = new EventMarketplaceDbContext(options);
+
+        context.Roles.Add(new Role()
+        {
+            Id = Guid.CreateVersion7(),
+            RoleType = RoleType.Member,
+            DisplayName = RoleType.Member.GetDisplayName()
+        });
+
+        await context.SaveChangesAsync();
+        
         var unitOfWork = new TestUnitOfWork(context);
         var passwordManager = new PasswordManager();
         var logger = new LoggerFactory().CreateLogger<RegisterUserCommandHandler>();

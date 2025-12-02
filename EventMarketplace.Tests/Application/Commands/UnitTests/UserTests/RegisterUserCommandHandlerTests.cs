@@ -107,6 +107,12 @@ public class RegisterUserCommandHandlerTests
     {
         _userRepo.Setup(x => x.CheckBusyEmail(It.IsAny<string>())).ReturnsAsync(false);
         _passwordManager.Setup(x => x.HashPassword(It.IsAny<string>())).Returns("password");
+        
+        _role.RoleType = RoleType.Member;
+        _role.DisplayName = RoleType.Member.GetDisplayName();
+        _role.Id = Guid.CreateVersion7();
+        
+        _roleRepo.Setup(x => x.GetRoleByEnumAsync(It.IsAny<RoleType>())).ReturnsAsync(_role);
 
         var command = new RegisterUserCommand(
             new RegisterUserDto()
