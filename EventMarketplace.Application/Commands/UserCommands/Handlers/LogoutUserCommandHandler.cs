@@ -13,13 +13,13 @@ public class LogoutUserCommandHandler(IUnitOfWork unitOfWork, IJwtProvider jwtPr
         try
         {
             var refreshTokenFromCookies = jwtProvider.GetRefreshTokenFromCookies();
-            var refreshTokenEntity = await unitOfWork.AuthRepo.GetEntityByRefreshTokenValue(refreshTokenFromCookies) 
+            var refreshTokenEntity = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshTokenFromCookies) 
                                      ?? throw new Exception("Brak refresh token'a w bazie danych.");
 
-            refreshTokenEntity.Revoked = true;
-            refreshTokenEntity.RevokedAt = DateTime.UtcNow;
+            refreshTokenEntity.SetRevokedToken();
+            
             jwtProvider.SetNullRefreshTokenInCookies();
-            await unitOfWork.AuthRepo.UpdateRefreshTokenEntity(refreshTokenEntity);
+            await unitOfWork.Auths.UpdateRefreshTokenEntity(refreshTokenEntity);
             
             await unitOfWork.CommitAsync(cancellationToken);
         }

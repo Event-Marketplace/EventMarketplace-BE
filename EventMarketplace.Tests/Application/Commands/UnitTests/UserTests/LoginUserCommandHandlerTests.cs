@@ -19,6 +19,7 @@ public class LoginUserCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWork;
     private readonly Mock<IUserRepository> _userRepo;
+    private readonly Mock<IAuthRepository> _authRepo;
     private readonly Mock<IPasswordManager> _passwordManager;
     private readonly Mock<ILogger<LoginUserCommandHandler>> _logger;
     private readonly Mock<IJwtProvider> _jwtProvider;
@@ -29,12 +30,14 @@ public class LoginUserCommandHandlerTests
     {
         _unitOfWork = new Mock<IUnitOfWork>();
         _userRepo = new Mock<IUserRepository>();
+        _authRepo = new Mock<IAuthRepository>();
         _passwordManager = new Mock<IPasswordManager>();
         _logger = new Mock<ILogger<LoginUserCommandHandler>>();
         _jwtProvider = new Mock<IJwtProvider>();
         
         _handler = new LoginUserCommandHandler(_unitOfWork.Object, _passwordManager.Object, _logger.Object, _jwtProvider.Object);
         _unitOfWork.Setup(x => x.Users).Returns(_userRepo.Object);
+        _unitOfWork.Setup(x => x.Auths).Returns(_authRepo.Object);
         _unitOfWork.Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         _unitOfWork.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         _user = new User();
@@ -92,33 +95,36 @@ public class LoginUserCommandHandlerTests
 
     #region PositiveTests
 
-    // [Theory]
-    // [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuiop")]
-    // [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuio")]
-    // public async Task Login_Successfully_When_Valid_Credentials(string email, string password, string token)
-    // {
-    //     //arrange
-    //     _user.Password = password;
-    //     _user.EmailAddress = EmailAddress.Create("b.longota2@wp.pl");
-    //     _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
-    //     _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
-    //         .Returns((string p1, string p2) => p1 == p2);
-    //     _jwtProvider.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns(token);
-    //
-    //     var command = new LoginUserCommand(
-    //         new LoginUserDto()
-    //         {
-    //             Email = email,
-    //             Password = password
-    //         });
-    //     //act
-    //     var result = await  _handler.Handle(command, CancellationToken.None);
-    //     
-    //     //asserts
-    //     Assert.Equal(token, result.TokenJwt);
-    //     _unitOfWork.Verify(x => x.CommitAsync(CancellationToken.None), Times.Once);
-    //     _unitOfWork.Verify(x => x.RollbackAsync(CancellationToken.None), Times.Never);
-    // }
+    [Theory]
+    [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuiop")]
+    [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuio")]
+    public async Task Login_Successfully_When_Valid_Credentials(string email, string password, string token)
+    {
+        //arrange
+        _user.Password = password;
+        _user.EmailAddress = EmailAddress.Create("b.longota2@wp.pl");
+        
+        _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
+        _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns((string p1, string p2) => p1 == p2);
+        _jwtProvider.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns(token);
+        _jwtProvider.Setup(x => x.GenerateRefreshToken(It.IsAny<User>()))
+            .Returns(new RefreshTokenResponse(){RefreshToken = "asd", Expires = DateTime.UtcNow.AddDays(7)});
+        
+        var command = new LoginUserCommand(
+            new LoginUserDto()
+            {
+                Email = email,
+                Password = password
+            });
+        //act
+        var result = await  _handler.Handle(command, CancellationToken.None);
+        
+        //asserts
+        Assert.Equal(token, result.TokenJwt);
+        _unitOfWork.Verify(x => x.CommitAsync(CancellationToken.None), Times.Once);
+        _unitOfWork.Verify(x => x.RollbackAsync(CancellationToken.None), Times.Never);
+    }
 
     #endregion
 }

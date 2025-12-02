@@ -33,14 +33,10 @@ public class LoginUserCommandHandler(
             var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
             
             jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
-            await unitOfWork.AuthRepo.AddNewRefreshTokenAsync(new RefreshToken()
-            {
-                Value = refreshToken.RefreshToken,
-                Expires = refreshToken.Expires,
-                Revoked = false,
-                CreateAt = DateTime.UtcNow,
-                UserId = userFromDb.Id
-            });
+            
+            var newRefreshToken =
+                RefreshToken.Create(refreshToken.RefreshToken, refreshToken.Expires, false, userFromDb.Id);
+            await unitOfWork.Auths.AddNewRefreshTokenAsync(newRefreshToken);
             
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");

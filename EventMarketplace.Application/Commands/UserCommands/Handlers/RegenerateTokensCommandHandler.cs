@@ -16,7 +16,7 @@ public class RegenerateTokensCommandHandler(IUnitOfWork unitOfWork, IJwtProvider
         try
         {
             var refreshToken = jwtProvider.GetRefreshTokenFromCookies();
-            var refreshFromDb = await unitOfWork.AuthRepo.GetEntityByRefreshTokenValue(refreshToken) 
+            var refreshFromDb = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshToken) 
                                 ?? throw new AppException("Brak refresh token'a w bazie danych.");
 
             if (refreshFromDb.Expires < DateTime.UtcNow) throw new Exception("Refresh token wygasł.");

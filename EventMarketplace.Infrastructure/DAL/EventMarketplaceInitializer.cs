@@ -1,4 +1,5 @@
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -164,6 +165,18 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
             ];
             
             await context.Events.AddRangeAsync(newEvents, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
+        if (!context.Roles.Any())
+        {
+            List<Role> roles = [
+                new Role(){RoleType = RoleType.Member, DisplayName = RoleType.Member.GetDisplayName(), CreateAt = DateTime.UtcNow},
+                new Role(){RoleType = RoleType.Organizer, DisplayName = RoleType.Organizer.GetDisplayName(), CreateAt = DateTime.UtcNow},
+                new Role(){RoleType = RoleType.Admin, DisplayName = RoleType.Admin.GetDisplayName(), CreateAt = DateTime.UtcNow}
+            ];
+            
+            await context.Roles.AddRangeAsync(roles, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
     }
