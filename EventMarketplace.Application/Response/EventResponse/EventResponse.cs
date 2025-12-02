@@ -13,4 +13,6 @@ public class EventResponse
     public bool IsActive { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public Guid OrganizerId { get; set; }
+    public string Organizer { get; set; }
 }
