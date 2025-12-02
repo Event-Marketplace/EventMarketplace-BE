@@ -26,7 +26,7 @@ public sealed class RegisterUserCommandHandler(
             if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
                 throw new AppException("Ten adres email jest już zajęty.");
             
-            var memberRole = await unitOfWork.RoleRepo.GetRoleByEnumAsync(RoleType.Member) 
+            var memberRole = await unitOfWork.Roles.GetRoleByEnumAsync(RoleType.Member) 
                              ?? throw new AppException($"Rola: {RoleType.Member.GetDisplayName()} nie istnieje w bazie danych.");
             var newUser = User.CreateUser(request.Dto.Email);
             newUser.AssignRole(memberRole);

@@ -36,7 +36,7 @@ public class LoginUserCommandHandler(
             
             var newRefreshToken =
                 RefreshToken.Create(refreshToken.RefreshToken, refreshToken.Expires, false, userFromDb.Id);
-            await unitOfWork.AuthRepo.AddNewRefreshTokenAsync(newRefreshToken);
+            await unitOfWork.Auths.AddNewRefreshTokenAsync(newRefreshToken);
             
             await unitOfWork.CommitAsync(cancellationToken);
             logger.LogInformation("Użytkownik został poprawnie zalogowany.");
