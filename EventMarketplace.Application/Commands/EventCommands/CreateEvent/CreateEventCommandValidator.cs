@@ -43,7 +43,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
 
         RuleFor(x => x.Dto.EventPlaceDescribtion)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.Description)
+            .When(x => x.Dto.LocationType == LocationType.DescriptionPlace)
             .WithMessage("Musisz podać opis miejsca wydarzenia");
         
         RuleFor(x => x.Dto.PostalCode)

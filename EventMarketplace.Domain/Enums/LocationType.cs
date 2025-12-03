@@ -5,7 +5,7 @@ namespace EventMarketplace.Domain.Enums;
 public enum LocationType
 {
     [Display(Name = "Opis miejsca wydarzenia")]
-    Description,
+    DescriptionPlace,
     [Display(Name = "Dokładny adres")]
     Address
 }

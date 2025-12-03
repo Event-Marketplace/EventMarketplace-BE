@@ -1,6 +1,9 @@
 using System.Security.Claims;
+using AutoMapper;
+using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Queries;
+using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Domain.Enums;
 using MediatR;
@@ -9,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventMarketplace.Infrastructure.DAL.QueryHandlers;
 
-public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, IHttpContextAccessor contextAccessor) : IRequestHandler<GetOrganizerEventsQuery, EventListResponse>
+public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, IHttpContextAccessor contextAccessor, IMapper mapper) : IRequestHandler<GetOrganizerEventsQuery, EventListResponse>
 {
     public async Task<EventListResponse> Handle(GetOrganizerEventsQuery request, CancellationToken cancellationToken)
     {
@@ -25,21 +28,9 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
 
         return new EventListResponse()
         {
-            Events = organizerEvents.Select(x => new EventResponse()
-            {
-                Id = x.Id,
-                Description = x.Description,
-                Price = x.Price,
-                Title = x.Title,
-                AvailableTickets = x.AvailableTickets,
-                StartDate = x.DurationOfTheEvent.StartEvent,
-                EndDate = x.DurationOfTheEvent.EndEvent,
-                Status = x.EventStatus.GetDisplayName(),
-                ImageUrl = x.ImageUrl,
-                CreatedAt = x.CreateAt,
-                OrganizerId = x.OrganizerId,
-                Organizer = x.Organizer.FullName.ToString()
-            }).ToList(),
+            Events = organizerEvents
+                .Select(x => mapper.Map<EventResponse>(x))
+                .ToList(),
             TotalCount = organizerEvents.Count
         };
     }

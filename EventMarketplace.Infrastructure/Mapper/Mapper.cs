@@ -20,7 +20,8 @@ public static class Mapper
             EndDate = @event.DurationOfTheEvent.EndEvent,
             CreatedAt = @event.CreateAt,
             UpdatedAt = @event.UpdatedAt,
-            Status = @event.EventStatus.GetDisplayName()
+            Status = @event.EventStatus,
+            StatusDisplayName = @event.EventStatus.GetDisplayName(),
         };
     }
 }

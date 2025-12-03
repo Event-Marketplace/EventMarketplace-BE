@@ -20,7 +20,7 @@ public class Event : BaseEntity
     public string? EventPlaceDescription { get; set; }
     
     public static Event Create(string title, string description, double price, int availableTickets, 
-        DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription)
+        DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)
     {
         return new Event()
         {
@@ -34,7 +34,9 @@ public class Event : BaseEntity
             ImageUrl = imageUrl,
             CreateAt = DateTime.UtcNow,
             Address = address,
-            EventPlaceDescription = eventPlaceDescription
+            EventPlaceDescription = eventPlaceDescription,
+            EventStatus = EventStatus.Draft,
+            LocationType = locationType
         };
     }
 }

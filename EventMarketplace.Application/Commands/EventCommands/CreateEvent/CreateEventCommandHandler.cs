@@ -35,12 +35,12 @@ public class CreateEventCommandHandler(
             var uploadAndReturnUriFromAzure =
                 await blobStorageService.UploadFileAsync(request.Dto.Image, "events", cancellationToken);
 
-            var (address, descriptionPlace) = CreateEventMapper.MapLocation(request.Dto);
+            var (address, descriptionPlace) = EventAddressMapper.MapLocationToEntity(request.Dto);
             
             var newEvent = Event.Create(request.Dto.Title, request.Dto.Description, request.Dto.Price,
                 request.Dto.AvailableTicketsCount, request.Dto.StartDateTime,
                 request.Dto.EndDateTime, Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
-                uploadAndReturnUriFromAzure, address, descriptionPlace);
+                uploadAndReturnUriFromAzure, address, descriptionPlace, request.Dto.LocationType);
 
             await unitOfWork.Events.AddEventAsync(newEvent, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);
