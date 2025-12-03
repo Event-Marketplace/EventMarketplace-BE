@@ -32,4 +32,8 @@
       <ProjectReference Include="..\EventMarketplace.Domain\EventMarketplace.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Crons\" />
+    </ItemGroup>
+
 </Project>

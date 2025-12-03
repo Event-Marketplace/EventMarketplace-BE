@@ -1,3 +1,4 @@
+using EventMarketplace.Domain.Enums;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
@@ -40,6 +41,30 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             .Must(IsAllowedSize).WithMessage("Plik jest zbyt duży. Maksymalnie 3MB.")
             .Must(IsAllowedExtension).WithMessage("Dozwolone formaty zdjęć to: .jpg, .jpeg, .png");
 
+        RuleFor(x => x.Dto.EventPlaceDescribtion)
+            .NotEmpty()
+            .When(x => x.Dto.LocationType == LocationType.Description)
+            .WithMessage("Musisz podać opis miejsca wydarzenia");
+        
+        RuleFor(x => x.Dto.PostalCode)
+            .NotEmpty()
+            .When(x => x.Dto.LocationType == LocationType.Address)
+            .WithMessage("Kod pocztowy jest wymagany.");
+        
+        RuleFor(x => x.Dto.City)
+            .NotEmpty()
+            .When(x => x.Dto.LocationType == LocationType.Address)
+            .WithMessage("Miasto jest wymagane.");
+        
+        RuleFor(x => x.Dto.Street)
+            .NotEmpty()
+            .When(x => x.Dto.LocationType == LocationType.Address)
+            .WithMessage("Ulica jest wymagana.");
+        
+        RuleFor(x => x.Dto.Number)
+            .NotEmpty()
+            .When(x => x.Dto.LocationType == LocationType.Address)
+            .WithMessage("Numer budynku/lokalu jest wymagany.");
     }
     
     private bool IsAllowedSize(IFormFile file)

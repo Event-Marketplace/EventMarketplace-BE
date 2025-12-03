@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 using EventMarketplace.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ public class DeleteEventCommandHandlerIntegrationTests
             DurationOfTheEvent = DurationOfTheEvent.Create(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(3)),
             Price = 100,
             ImageUrl = "asdas",
-            IsActive = false,
+            EventStatus = EventStatus.DeletedByOrganizer,
             CreateAt = DateTime.UtcNow
         };
 

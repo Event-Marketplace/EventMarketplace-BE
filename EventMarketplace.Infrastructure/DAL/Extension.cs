@@ -1,6 +1,5 @@
 
 using EventMarketplace.Domain.Repositories;
-using EventMarketplace.Infrastructure.Crons;
 using EventMarketplace.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,15 +32,15 @@ public static class Extension
         services.AddHostedService<EventMarketplaceInitializer>();
         
 
-        services.AddQuartz(q =>
-        {
-            var jobKey = new JobKey("DailySetUnActive");
-            q.AddJob<SetUnActiveEventsCronJob>(opt => opt.WithIdentity(jobKey));
-            q.AddTrigger(opt =>
-                opt.ForJob(jobKey).WithIdentity("DailySetUnActive-trigger").WithCronSchedule("0 0 2 * * ?"));
-        });
+        // services.AddQuartz(q =>
+        // {
+        //     var jobKey = new JobKey("DailySetUnActive");
+        //     q.AddJob<SetUnActiveEventsCronJob>(opt => opt.WithIdentity(jobKey));
+        //     q.AddTrigger(opt =>
+        //         opt.ForJob(jobKey).WithIdentity("DailySetUnActive-trigger").WithCronSchedule("0 0 2 * * ?"));
+        // });
         
-        services.AddQuartzHostedService(opt => { opt.WaitForJobsToComplete = true; });
+        //services.AddQuartzHostedService(opt => { opt.WaitForJobsToComplete = true; });
         
         return services;
     }

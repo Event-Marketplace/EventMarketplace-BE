@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using DotNetEnv;
 using EventMarketplace.Application;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
@@ -22,7 +23,11 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 builder.Services.AddOpenApi();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddAutoMapper(typeof(EventProfile).Assembly);
 

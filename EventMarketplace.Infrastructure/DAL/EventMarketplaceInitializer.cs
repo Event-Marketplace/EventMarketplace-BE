@@ -31,7 +31,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 349.99,
                     AvailableTickets = 1200,
                     ImageUrl = "https://example.com/images/soundwave2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -45,7 +45,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 150.00,
                     AvailableTickets = 5000,
                     ImageUrl = "https://example.com/images/krakow-marathon.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -59,7 +59,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 59.99,
                     AvailableTickets = 3000,
                     ImageUrl = "https://example.com/images/planszowkon2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -73,7 +73,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 499.00,
                     AvailableTickets = 800,
                     ImageUrl = "https://example.com/images/futuretech2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -87,7 +87,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 40.00,
                     AvailableTickets = 1500,
                     ImageUrl = "https://example.com/images/classicdrive2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -101,7 +101,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 89.00,
                     AvailableTickets = 400,
                     ImageUrl = "https://example.com/images/standup2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -115,7 +115,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 120.00,
                     AvailableTickets = 1000,
                     ImageUrl = "https://example.com/images/formart2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -129,7 +129,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 99.99,
                     AvailableTickets = 2500,
                     ImageUrl = "https://example.com/images/league-masters.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -143,7 +143,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 180.00,
                     AvailableTickets = 700,
                     ImageUrl = "https://example.com/images/chopin2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
@@ -157,7 +157,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     Price = 220.00,
                     AvailableTickets = 50,
                     ImageUrl = "https://example.com/images/masterchef2025.jpg",
-                    IsActive = true,
+                    EventStatus = EventStatus.Draft,
                     CreateAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48"),
                 }

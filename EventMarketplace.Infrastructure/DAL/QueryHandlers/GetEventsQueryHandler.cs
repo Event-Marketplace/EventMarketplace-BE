@@ -1,6 +1,7 @@
 
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Infrastructure.DAL.DbOperations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
     {
         var events = context.Events
             .Include(x => x.Organizer)
-            .Where(x => x.IsActive)
+            .Where(x => x.EventStatus == EventStatus.Aproved)
             .FilterEvents(request)
             .OrderBy(x => x.DurationOfTheEvent.StartEvent);
             
@@ -32,7 +33,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
                 AvailableTickets = x.AvailableTickets,
                 StartDate = x.DurationOfTheEvent.StartEvent,
                 EndDate = x.DurationOfTheEvent.EndEvent,
-                IsActive = x.IsActive,
+                Status = x.EventStatus.GetDisplayName(),
                 ImageUrl = x.ImageUrl,
                 CreatedAt = x.CreateAt,
                 OrganizerId = x.OrganizerId,

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
+using EventMarketplace.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
                 AvailableTickets = x.AvailableTickets,
                 StartDate = x.DurationOfTheEvent.StartEvent,
                 EndDate = x.DurationOfTheEvent.EndEvent,
-                IsActive = x.IsActive,
+                Status = x.EventStatus.GetDisplayName(),
                 ImageUrl = x.ImageUrl,
                 CreatedAt = x.CreateAt,
                 OrganizerId = x.OrganizerId,

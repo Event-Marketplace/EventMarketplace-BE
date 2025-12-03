@@ -1,3 +1,4 @@
+using EventMarketplace.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace EventMarketplace.Application.Dtos.EventDtos;
@@ -12,4 +13,10 @@ public class CreateEventDto
     public double Price { get; set; }
     public int AvailableTicketsCount { get; set; }
     public IFormFile Image{ get; set; }
+    public LocationType LocationType { get; set; }
+    public string? PostalCode { get; set; }
+    public string? City { get; set; }
+    public string? Street { get; set; }
+    public string? Number { get; set; }
+    public string? EventPlaceDescribtion { get; set; }
 }

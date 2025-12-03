@@ -10,6 +10,7 @@ public class EventProfile : Profile
     public EventProfile()
     {
         CreateMap<EditEventDto, Event>()
+            .ForMember(dest => dest.Address, opt => opt.MapFrom<AddressResolver>())
             .ForAllMembers(opt => 
                 opt.Condition((src, dest, srcMember) => srcMember != null));
     }
