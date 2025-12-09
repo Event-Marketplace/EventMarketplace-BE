@@ -6,6 +6,7 @@ using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Domain.Enums;
+using EventMarketplace.Infrastructure.DAL.DbOperations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,17 +22,20 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
             .SingleOrDefaultAsync(x => x.Id == Guid.Parse(loggedOrganizerId), cancellationToken: cancellationToken) 
             ?? throw new AppException("Brak organizatora o takim id.");
 
-        var organizerEvents = await context.Events
+        var organizerEvents = context.Events
             .Include(x => x.Organizer)
             .Where(x => x.OrganizerId == organizer.Id)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .FilterEvents(request);
+
+        var paginatedResult = await organizerEvents
+            .PaginationEvents(request)
+            .Select(x => mapper.Map<EventResponse>(x))
+            .ToListAsync(cancellationToken);
 
         return new EventListResponse()
         {
-            Events = organizerEvents
-                .Select(x => mapper.Map<EventResponse>(x))
-                .ToList(),
-            TotalCount = organizerEvents.Count
+            Events = paginatedResult,
+            TotalCount = organizerEvents.Count()
         };
     }
 }
