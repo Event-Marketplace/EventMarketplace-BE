@@ -8,6 +8,7 @@ using EventMarketplace.Application.Response.EventResponse;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventMarketplace.Controllers
@@ -22,10 +23,23 @@ namespace EventMarketplace.Controllers
             return Ok(await mediator.Send(query));
         }
 
+        [Authorize]
+        [HttpGet("organizer")]
+        public async Task<IActionResult> GetOrganizerEvents([FromQuery] GetOrganizerEventsQuery query)
+        {
+            return Ok(await mediator.Send(query));
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
         {
             return Ok(await mediator.Send(new GetEventQuery(){EventId = id}));
+        }
+        
+        [HttpGet("status-options")]
+        public async Task<IActionResult> GetAllEventStatuses()
+        {
+            return Ok(mediator.Send(new GetEventStatusesQuery()));
         }
 
         [Authorize]

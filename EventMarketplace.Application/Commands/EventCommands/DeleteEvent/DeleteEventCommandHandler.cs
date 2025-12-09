@@ -1,12 +1,14 @@
 
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Utils.Azure;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.Repositories;
 using MediatR;
 
 namespace EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 
-public class DeleteEventCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteEventCommand>
+public class DeleteEventCommandHandler(IUnitOfWork unitOfWork, IBlobStorageService blobStorageService) : IRequestHandler<DeleteEventCommand>
 {
     public async Task Handle(DeleteEventCommand request, CancellationToken cancellationToken)
     {
@@ -17,9 +19,11 @@ public class DeleteEventCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler
             var eventToDelete = await unitOfWork.Events.GetEventByIdAsync(request.EventId) 
                                 ?? throw new AppException("Brak wydarzenia o podanym id w bazie danych.");
 
-            if (eventToDelete.IsActive) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
+            if (eventToDelete.EventStatus == EventStatus.Aproved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
             
             await unitOfWork.Events.DeleteEventAsync(eventToDelete);
+            var imageName = eventToDelete.ImageUrl.Split('/').Last();
+            await blobStorageService.RemoveImageFromAzureBlob($"{imageName}", "events");
             await unitOfWork.CommitAsync(cancellationToken);
         }
         catch (Exception e)

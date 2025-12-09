@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 
 namespace EventMarketplace.Infrastructure.Mapper;
 
@@ -18,8 +19,9 @@ public static class Mapper
             StartDate = @event.DurationOfTheEvent.StartEvent,
             EndDate = @event.DurationOfTheEvent.EndEvent,
             CreatedAt = @event.CreateAt,
-            IsActive = @event.IsActive,
-            UpdatedAt = @event.UpdatedAt
+            UpdatedAt = @event.UpdatedAt,
+            Status = @event.EventStatus,
+            StatusDisplayName = @event.EventStatus.GetDisplayName(),
         };
     }
 }

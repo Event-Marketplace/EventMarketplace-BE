@@ -1,3 +1,4 @@
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 
 namespace EventMarketplace.Domain.Entities;
@@ -10,14 +11,16 @@ public class Event : BaseEntity
     public double Price { get; set; }
     public int AvailableTickets { get; set; }
     public string ImageUrl { get; set; }
-    public bool IsActive { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    
+    public EventStatus EventStatus { get; set; }
     public Guid OrganizerId { get; set; }
     public User Organizer { get; set; }
+    public LocationType LocationType { get; set; }
+    public Address? Address { get; set; }
+    public string? EventPlaceDescription { get; set; }
     
     public static Event Create(string title, string description, double price, int availableTickets, 
-        DateTime start, DateTime end, Guid organizerId, string imageUrl)
+        DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)
     {
         return new Event()
         {
@@ -30,11 +33,10 @@ public class Event : BaseEntity
             OrganizerId = organizerId,
             ImageUrl = imageUrl,
             CreateAt = DateTime.UtcNow,
+            Address = address,
+            EventPlaceDescription = eventPlaceDescription,
+            EventStatus = EventStatus.Draft,
+            LocationType = locationType
         };
-    }
-
-    public void SetIsActiveEvent()
-    {
-        IsActive = DurationOfTheEvent.StartEvent.Date >= DateTime.UtcNow.Date;
     }
 }

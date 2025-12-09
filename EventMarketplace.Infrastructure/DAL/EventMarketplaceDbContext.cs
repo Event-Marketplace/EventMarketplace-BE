@@ -91,8 +91,16 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          f.Property(p => p.EndEvent).HasColumnName("EndDate");
       });
 
+      modelBuilder.Entity<Event>().OwnsOne(e => e.Address, f =>
+      {
+         f.Property(p => p.PostalCode).HasColumnName("PostalCode");
+         f.Property(p => p.City).HasColumnName("City");
+         f.Property(p => p.Street).HasColumnName("Street");
+         f.Property(p => p.Number).HasColumnName("Number");
+      });
+
       #endregion
 
-    
+
    }
 }

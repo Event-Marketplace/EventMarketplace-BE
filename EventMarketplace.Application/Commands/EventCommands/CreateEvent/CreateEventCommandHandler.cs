@@ -1,8 +1,11 @@
 using System.Security.Claims;
+using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
+using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -32,13 +35,12 @@ public class CreateEventCommandHandler(
             var uploadAndReturnUriFromAzure =
                 await blobStorageService.UploadFileAsync(request.Dto.Image, "events", cancellationToken);
 
+            var (address, descriptionPlace) = EventAddressMapper.MapLocationToEntity(request.Dto);
+            
             var newEvent = Event.Create(request.Dto.Title, request.Dto.Description, request.Dto.Price,
                 request.Dto.AvailableTicketsCount, request.Dto.StartDateTime,
                 request.Dto.EndDateTime, Guid.Parse(loggedOrganizer.FindFirst(ClaimTypes.NameIdentifier)?.Value),
-                uploadAndReturnUriFromAzure);
-
-            //problem z datami, w bazie mam infinity przez co ta flaga źle się setuje
-            newEvent.SetIsActiveEvent();
+                uploadAndReturnUriFromAzure, address, descriptionPlace, request.Dto.LocationType);
 
             await unitOfWork.Events.AddEventAsync(newEvent, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);

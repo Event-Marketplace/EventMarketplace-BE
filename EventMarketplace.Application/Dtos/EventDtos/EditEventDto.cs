@@ -1,3 +1,4 @@
+using EventMarketplace.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -14,4 +15,10 @@ public class EditEventDto
     public double? Price { get; set; }
     public int? AvailableTickets { get; set; }
     public IFormFile? Image{ get; set; }
+    public LocationType LocationType { get; set; }
+    public string? PostalCode { get; set; }
+    public string? City { get; set; }
+    public string? Street { get; set; }
+    public string? Number { get; set; }
+    public string? EventPlaceDescribtion { get; set; }
 }

@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using EventMarketplace.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace EventMarketplace.Application.Utils.Azure;
@@ -35,5 +36,15 @@ public class BlobStorageService(BlobServiceClient serviceClient) : IBlobStorageS
         await blobClient.UploadAsync(stream, overwrite: true, cancellationToken: cancellationToken);
 
         return blobClient.Uri.ToString();
+    }
+
+    public async Task RemoveImageFromAzureBlob(string name, string containerName)
+    {
+        var container = serviceClient.GetBlobContainerClient(containerName);
+        if (!await container.ExistsAsync()) 
+            throw new AppException("Brak kontenera o takiej nazwie na Azure");
+        
+        var blobClient = container.GetBlobClient(name);
+        await blobClient.DeleteIfExistsAsync();
     }
 }
