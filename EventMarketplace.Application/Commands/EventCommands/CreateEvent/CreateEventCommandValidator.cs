@@ -41,7 +41,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             .Must(IsAllowedSize).WithMessage("Plik jest zbyt duży. Maksymalnie 3MB.")
             .Must(IsAllowedExtension).WithMessage("Dozwolone formaty zdjęć to: .jpg, .jpeg, .png");
 
-        RuleFor(x => x.Dto.EventPlaceDescribtion)
+        RuleFor(x => x.Dto.EventPlaceDescription)
             .NotEmpty()
             .When(x => x.Dto.LocationType == LocationType.DescriptionPlace)
             .WithMessage("Musisz podać opis miejsca wydarzenia");

@@ -14,9 +14,15 @@ public class EventProfile : Profile
     public EventProfile()
     {
         CreateMap<EditEventDto, Event>()
-            .ForMember(dest => dest.Address, opt => opt.MapFrom<AddressResolver>())
-            .ForAllMembers(opt => 
+            .ForMember(dest => dest.Address,
+                opt =>
+                {
+                    opt.MapFrom<AddressResolver>();
+                    opt.Condition((src, dest, srcMember) => true); // zawsze mapuj
+                })
+            .ForAllMembers(opt =>
                 opt.Condition((src, dest, srcMember) => srcMember != null));
+
 
         CreateMap<Address, AddressResponse>();
         CreateMap<Event, EventResponse>()
