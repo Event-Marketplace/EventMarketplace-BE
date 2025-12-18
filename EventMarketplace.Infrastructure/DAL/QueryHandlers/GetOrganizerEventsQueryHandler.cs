@@ -25,7 +25,8 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
         var organizerEvents = context.Events
             .Include(x => x.Organizer)
             .Where(x => x.OrganizerId == organizer.Id)
-            .FilterEvents(request);
+            .FilterEvents(request)
+            .OrderByDescending(x => x.CreateAt);
 
         var paginatedResult = await organizerEvents
             .PaginationEvents(request)

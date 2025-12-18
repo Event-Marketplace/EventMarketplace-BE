@@ -11,7 +11,7 @@ public static class EventAddressMapper
     {
         return dto.LocationType switch
         {
-            LocationType.DescriptionPlace => (null, dto.EventPlaceDescribtion),
+            LocationType.DescriptionPlace => (null, dto.EventPlaceDescription),
             LocationType.Address => (Address.Create(dto.Street, dto.City, dto.Number, dto.PostalCode),
                 string.Empty),
 

@@ -52,8 +52,9 @@ namespace EventMarketplace.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventCommand command)
+        public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventDto Dto)
         {
+            var command = new EditEventCommand(Dto);
             command.Dto.Id = id;
             await mediator.Send(command);
             return NoContent();

@@ -29,7 +29,7 @@ public static class Extension
         services.AddScoped<IEventRepository, EventPostgresRepository>();
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddHostedService<EventMarketplaceInitializer>();
+        // services.AddHostedService<EventMarketplaceInitializer>();
         
 
         // services.AddQuartz(q =>

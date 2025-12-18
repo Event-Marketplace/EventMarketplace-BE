@@ -27,12 +27,30 @@ public class EditEventCommandHandler(
             
             if (request.Dto.Image != null)
             {
-                var imageStrings = eventToUdpate.ImageUrl.Split('/');
+                string imageName;
                 
-                var uri = await storageService.UploadOrReplaceFileAsync(request.Dto.Image, imageStrings.Last(), "events",
+                if (!string.IsNullOrWhiteSpace(eventToUdpate.ImageUrl))
+                {
+                    try
+                    {
+                        var uri = new Uri(eventToUdpate.ImageUrl);
+                        imageName = Path.GetFileName(uri.AbsolutePath);
+                    }
+                    catch
+                    {
+                        // fallback: generuj nową nazwę
+                        imageName = $"{Guid.NewGuid()}{Path.GetExtension(request.Dto.Image.FileName)}";
+                    }
+                }
+                else
+                {
+                    imageName = $"{Guid.NewGuid()}{Path.GetExtension(request.Dto.Image.FileName)}";
+                }
+                
+                var newUri = await storageService.UploadOrReplaceFileAsync(request.Dto.Image, imageName, "events",
                     cancellationToken);
                 
-                eventToUdpate.ImageUrl = uri;
+                eventToUdpate.ImageUrl = newUri;
 
                 await unitOfWork.Events.UpdateEventAsync(eventToUdpate);
             }
