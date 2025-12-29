@@ -30,7 +30,7 @@ Podział na warstwy:
 - Domain
 - Infrastructure
 
-Rozdzielenie komend i zapytań (CQRS)
+Rozdzielenie komend i zapytań (CQRS).
 Projekt został zaprojektowany zgodnie z zasadami Clean Architecture, 
 co pozwala na wyraźne oddzielenie logiki biznesowej od szczegółów technicznych.
 
