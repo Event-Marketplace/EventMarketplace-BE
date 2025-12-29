@@ -18,6 +18,7 @@ Podstawowe funkcjonalności dla roli Organizatora zostały już zaimplementowane
 - CRUD wydarzeń (Organizer)
 - System statusów wydarzeń
 - CI/CD + Docker
+- Upload zdjęć wydarzeń do Azure Blob Storage
 
 ---
 
