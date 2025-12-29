@@ -29,7 +29,17 @@ Podział na warstwy:
 - Application (CQRS + MediatR)
 - Domain
 - Infrastructure
+
 Rozdzielenie komend i zapytań (CQRS)
+Projekt został zaprojektowany zgodnie z zasadami Clean Architecture, 
+co pozwala na wyraźne oddzielenie logiki biznesowej od szczegółów technicznych.
+
+- Warstwa **Domain** nie posiada zależności od innych warstw i zawiera wyłącznie logikę biznesową.
+- Warstwa **Application** implementuje przypadki użycia oraz wzorce CQRS i MediatR.
+- Warstwa **Infrastructure** zawiera implementacje dostępu do danych, integracje zewnętrzne oraz szczegóły techniczne.
+- Warstwa **API** pełni rolę punktu wejścia do systemu i odpowiada za obsługę żądań HTTP oraz autoryzację.
+
+Zależności pomiędzy warstwami są skierowane do wewnątrz, co ułatwia testowanie, rozwój i utrzymanie aplikacji.
 
 ---
 
@@ -69,17 +79,3 @@ Rozdzielenie komend i zapytań (CQRS)
 - Asynchroniczna komunikacja (RabbitMQ / Kafka)
 - Read side na Dapper
 - Background jobs dla maili
-
----
-
-## Clean Architecture
-
-Projekt został zaprojektowany zgodnie z zasadami Clean Architecture, 
-co pozwala na wyraźne oddzielenie logiki biznesowej od szczegółów technicznych.
-
-- Warstwa **Domain** nie posiada zależności od innych warstw i zawiera wyłącznie logikę biznesową.
-- Warstwa **Application** implementuje przypadki użycia oraz wzorce CQRS i MediatR.
-- Warstwa **Infrastructure** zawiera implementacje dostępu do danych, integracje zewnętrzne oraz szczegóły techniczne.
-- Warstwa **API** pełni rolę punktu wejścia do systemu i odpowiada za obsługę żądań HTTP oraz autoryzację.
-
-Zależności pomiędzy warstwami są skierowane do wewnątrz, co ułatwia testowanie, rozwój i utrzymanie aplikacji.
