@@ -171,7 +171,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
         if (!context.Roles.Any())
         {
             List<Role> roles = [
-                new Role(){RoleType = RoleType.Member, DisplayName = RoleType.Member.GetDisplayName(), CreateAt = DateTime.UtcNow},
+                new Role(){RoleType = RoleType.Participant, DisplayName = RoleType.Participant.GetDisplayName(), CreateAt = DateTime.UtcNow},
                 new Role(){RoleType = RoleType.Organizer, DisplayName = RoleType.Organizer.GetDisplayName(), CreateAt = DateTime.UtcNow},
                 new Role(){RoleType = RoleType.Admin, DisplayName = RoleType.Admin.GetDisplayName(), CreateAt = DateTime.UtcNow}
             ];

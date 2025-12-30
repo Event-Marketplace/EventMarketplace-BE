@@ -28,8 +28,8 @@ public class RegisterUserCommandHandlerIntegrationTests
         context.Roles.Add(new Role()
         {
             Id = Guid.CreateVersion7(),
-            RoleType = RoleType.Member,
-            DisplayName = RoleType.Member.GetDisplayName()
+            RoleType = RoleType.Participant,
+            DisplayName = RoleType.Participant.GetDisplayName()
         });
 
         await context.SaveChangesAsync();
