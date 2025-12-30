@@ -5,22 +5,26 @@ using System.Text;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EventMarketplace.Application.Utils.Jwt;
 
-public class JwtProvider(IHttpContextAccessor contextAccessor) : IJwtProvider
+public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository userRepository) : IJwtProvider
 {
     public string GenerateToken(User user)
     {
-        var claims = new[]
+        var userRolesNames = userRepository.GetUserRoles(user.Id);
+        
+        var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.EmailAddress.Value),
-            new Claim(ClaimTypes.Role, user.IsOrganizerAccount ? "Organizer" : "User")
         };
+        
+        claims.AddRange(userRolesNames.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
         var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
