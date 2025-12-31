@@ -16,6 +16,12 @@ namespace EventMarketplace.Controllers
         {
             return Ok(await mediator.Send(new GetStatsQuery()));
         }
+
+        [HttpGet("alerts")]
+        public async Task<IActionResult> GetAlerts()
+        {
+            return Ok(await mediator.Send(new GetAlertsQuery()));
+        }
         
     }
 }

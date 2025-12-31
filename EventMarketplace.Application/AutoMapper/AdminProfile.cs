@@ -9,5 +9,7 @@ public class AdminProfile : Profile
     public AdminProfile()
     {
         CreateMap<AdminStats, StatsResponse>();
+        CreateMap<AdminPendingEvents, PendingEventResponse>();
+        CreateMap<AdminAlerts, AlertsResponse>();
     }
 }

@@ -5,4 +5,5 @@ namespace EventMarketplace.Domain.Repositories;
 public interface IAdminRepository
 {
     Task<AdminStats> GetAdminStatsAsync();
+    Task<AdminAlerts> GetAdminAlertsAsync();
 }
