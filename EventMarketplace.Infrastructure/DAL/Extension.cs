@@ -1,8 +1,11 @@
 
+using System.Data;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Quartz;
 using Quartz.Spi;
 
@@ -29,9 +32,13 @@ public static class Extension
         services.AddScoped<IEventRepository, EventPostgresRepository>();
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+
+        //rejestracja idbconnection dla dappera
+        services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
+        services.AddScoped<IAdminRepository, AdminRepository>();
+        
         // services.AddHostedService<EventMarketplaceInitializer>();
         
-
         // services.AddQuartz(q =>
         // {
         //     var jobKey = new JobKey("DailySetUnActive");

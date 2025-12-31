@@ -24,4 +24,11 @@ public class UserPostgresRepository(EventMarketplaceDbContext context) : IUserRe
         var isBusy = await context.Users.FirstOrDefaultAsync(x => x.EmailAddress.Value.Equals(emailAddress));
         return isBusy != null;
     }
+
+    public List<string> GetUserRoles(Guid userId)
+        =>  context.UserRoles
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Role.RoleType.ToString())
+            .ToList();
+ 
 }
