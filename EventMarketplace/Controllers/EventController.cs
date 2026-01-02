@@ -30,6 +30,12 @@ namespace EventMarketplace.Controllers
             return Ok(await mediator.Send(query));
         }
 
+        [HttpGet("admin")]
+        public async Task<IActionResult> GetAdminEvents([FromQuery] GetAdminEventsQuery query)
+        {
+            return Ok(await mediator.Send(query));
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
         {
