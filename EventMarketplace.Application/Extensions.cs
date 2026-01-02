@@ -65,6 +65,7 @@ public static class Extensions
 
         services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         
         //ustawienie limitera
         services.AddRateLimiter(opt =>
