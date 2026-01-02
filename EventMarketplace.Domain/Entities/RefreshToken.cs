@@ -18,7 +18,7 @@ public class RefreshToken : BaseEntity
             Value = value,
             Expires = expires,
             Revoked = false,
-            CreateAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             UserId = userId
         };
     }

@@ -36,7 +36,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
                 Status = x.EventStatus,
                 StatusDisplayName = x.EventStatus.GetDisplayName(),
                 ImageUrl = x.ImageUrl,
-                CreatedAt = x.CreateAt,
+                CreatedAt = x.CreatedAt,
                 OrganizerId = x.OrganizerId,
                 Organizer = x.Organizer.FullName.ToString()
             }).ToList(),

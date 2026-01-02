@@ -10,6 +10,7 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
    public DbSet<RefreshToken> RefreshTokens { get; set; }
    public DbSet<Role> Roles { get; set; }
    public DbSet<UserRole> UserRoles { get; set; }
+   public DbSet<EventComment> EventComments { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
@@ -35,6 +36,11 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          entity.HasKey(ur => new { ur.UserId, ur.RoleId });
       });
 
+      modelBuilder.Entity<EventComment>(entity =>
+      {
+         entity.HasKey(ec => ec.Id);
+      });
+
       #region RelationsConfig
 
       modelBuilder.Entity<Event>()
@@ -56,6 +62,17 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          .HasOne(r => r.Role)
          .WithMany(u => u.UserRoles)
          .HasForeignKey(r => r.RoleId);
+
+      modelBuilder.Entity<EventComment>()
+         .HasOne(ec => ec.User)
+         .WithMany(u => u.EventComments)
+         .HasForeignKey(ec => ec.UserId);
+
+      modelBuilder.Entity<EventComment>()
+         .HasOne(ec => ec.Event)
+         .WithMany(e => e.EventComments)
+         .HasForeignKey(ec => ec.EventId)
+         .OnDelete(DeleteBehavior.SetNull);
 
       #endregion
 
