@@ -39,4 +39,9 @@ public class Event : BaseEntity
             LocationType = locationType
         };
     }
+
+    public void SubmitEventToAdminVerification()
+    {
+        EventStatus = EventStatus.Submitted;
+    }
 }

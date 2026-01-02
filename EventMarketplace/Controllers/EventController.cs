@@ -51,6 +51,14 @@ namespace EventMarketplace.Controllers
             return Created();
         }
 
+        [HttpPut("submit-event/{eventId:guid}")]
+        public async Task<IActionResult> SubmitEventToAdmin([FromRoute] Guid eventId)
+        {
+            var command = new SubmitEventCommand(eventId);
+            await mediator.Send(command);
+            return NoContent();
+        }
+
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventDto Dto)
         {
