@@ -28,7 +28,9 @@ public static class AdminEventOperations
 
         if (!string.IsNullOrEmpty(query.CityFilter))
         {
-            response = response.Where(x => x.Address.City.ToLower().Contains(query.CityFilter.ToLower()));
+            response = response.Where(x => x.Address != null ? 
+                x.Address.City.ToLower().Contains(query.CityFilter.ToLower()) : 
+                x.EventPlaceDescription.ToLower().Contains(query.CityFilter.ToLower()));
         }
         
         if (query.CreatedFromFilter.HasValue && query.CreatedToFilter.HasValue)
