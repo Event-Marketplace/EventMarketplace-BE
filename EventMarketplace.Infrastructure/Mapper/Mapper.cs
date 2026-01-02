@@ -18,7 +18,7 @@ public static class Mapper
             ImageUrl = @event.ImageUrl,
             StartDate = @event.DurationOfTheEvent.StartEvent,
             EndDate = @event.DurationOfTheEvent.EndEvent,
-            CreatedAt = @event.CreateAt,
+            CreatedAt = @event.CreatedAt,
             UpdatedAt = @event.UpdatedAt,
             Status = @event.EventStatus,
             StatusDisplayName = @event.EventStatus.GetDisplayName(),

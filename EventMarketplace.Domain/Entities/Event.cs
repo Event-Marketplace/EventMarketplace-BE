@@ -18,6 +18,7 @@ public class Event : BaseEntity
     public LocationType LocationType { get; set; }
     public Address? Address { get; set; }
     public string? EventPlaceDescription { get; set; }
+    public ICollection<EventComment> EventComments { get; set; } = [];
     
     public static Event Create(string title, string description, double price, int availableTickets, 
         DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)
@@ -32,11 +33,16 @@ public class Event : BaseEntity
             DurationOfTheEvent = DurationOfTheEvent.Create(start, end),
             OrganizerId = organizerId,
             ImageUrl = imageUrl,
-            CreateAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             Address = address,
             EventPlaceDescription = eventPlaceDescription,
             EventStatus = EventStatus.Draft,
             LocationType = locationType
         };
+    }
+
+    public void SubmitEventToAdminVerification()
+    {
+        EventStatus = EventStatus.Submitted;
     }
 }

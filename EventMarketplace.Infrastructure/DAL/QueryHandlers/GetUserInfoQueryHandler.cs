@@ -23,7 +23,7 @@ public sealed class GetUserInfoQueryHandler(IUserRepository userRepository) : IR
             Number = user.Address.Number,
             City = user.Address.City,
             PostalCode = user.Address.PostalCode,
-            RegistrationDate = user.CreateAt
+            RegistrationDate = user.CreatedAt
         };
     }
 }

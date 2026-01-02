@@ -18,12 +18,15 @@ public class User : BaseEntity
     public ICollection<Event> Events { get; set; } = [];
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     public ICollection<UserRole> UserRoles { get; set; } = [];
+
+    public ICollection<EventComment> EventComments { get; set; } = [];
+    
     public static User CreateUser(string email)
     {
         return new User()
         {
             EmailAddress = EmailAddress.Create(email),
-            CreateAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
         };
     }
 

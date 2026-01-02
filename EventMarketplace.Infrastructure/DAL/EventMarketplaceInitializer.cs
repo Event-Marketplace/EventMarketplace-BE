@@ -32,7 +32,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1200,
                     ImageUrl = "https://example.com/images/soundwave2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -46,7 +46,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 5000,
                     ImageUrl = "https://example.com/images/krakow-marathon.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -60,7 +60,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 3000,
                     ImageUrl = "https://example.com/images/planszowkon2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -74,7 +74,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 800,
                     ImageUrl = "https://example.com/images/futuretech2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -88,7 +88,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1500,
                     ImageUrl = "https://example.com/images/classicdrive2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -102,7 +102,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 400,
                     ImageUrl = "https://example.com/images/standup2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -116,7 +116,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 1000,
                     ImageUrl = "https://example.com/images/formart2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -130,7 +130,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 2500,
                     ImageUrl = "https://example.com/images/league-masters.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -144,7 +144,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 700,
                     ImageUrl = "https://example.com/images/chopin2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48")
                 },
                 new Event
@@ -158,7 +158,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     AvailableTickets = 50,
                     ImageUrl = "https://example.com/images/masterchef2025.jpg",
                     EventStatus = EventStatus.Draft,
-                    CreateAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
                     OrganizerId = Guid.Parse("0199dd45-2cd6-7d46-8789-cc129f983d48"),
                 }
                     
@@ -171,9 +171,9 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
         if (!context.Roles.Any())
         {
             List<Role> roles = [
-                new Role(){RoleType = RoleType.Participant, DisplayName = RoleType.Participant.GetDisplayName(), CreateAt = DateTime.UtcNow},
-                new Role(){RoleType = RoleType.Organizer, DisplayName = RoleType.Organizer.GetDisplayName(), CreateAt = DateTime.UtcNow},
-                new Role(){RoleType = RoleType.Admin, DisplayName = RoleType.Admin.GetDisplayName(), CreateAt = DateTime.UtcNow}
+                new Role(){RoleType = RoleType.Participant, DisplayName = RoleType.Participant.GetDisplayName(), CreatedAt = DateTime.UtcNow},
+                new Role(){RoleType = RoleType.Organizer, DisplayName = RoleType.Organizer.GetDisplayName(), CreatedAt = DateTime.UtcNow},
+                new Role(){RoleType = RoleType.Admin, DisplayName = RoleType.Admin.GetDisplayName(), CreatedAt = DateTime.UtcNow}
             ];
             
             await context.Roles.AddRangeAsync(roles, cancellationToken);
