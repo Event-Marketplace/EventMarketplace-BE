@@ -1,5 +1,6 @@
 
 using EventMarketplace.Application.Commands.EventCommands;
+using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
 using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 using EventMarketplace.Application.Commands.EventCommands.EditEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
@@ -73,6 +74,15 @@ namespace EventMarketplace.Controllers
         public async Task<IActionResult> SubmitEventToAdmin([FromRoute] Guid eventId)
         {
             var command = new SubmitEventCommand(eventId);
+            await mediator.Send(command);
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("approve-event/{eventId:guid}")]
+        public async Task<IActionResult> ApproveEvent([FromRoute] Guid eventId)
+        {
+            var command = new ApproveEventCommand(eventId);
             await mediator.Send(command);
             return NoContent();
         }

@@ -44,5 +44,12 @@ public class Event : BaseEntity
     public void SubmitEventToAdminVerification()
     {
         EventStatus = EventStatus.Submitted;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ApproveEvent()
+    {
+        EventStatus = EventStatus.Aproved;
+        UpdatedAt = DateTime.UtcNow;
     }
 }
