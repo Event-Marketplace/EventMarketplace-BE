@@ -1,6 +1,7 @@
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Application.Response.EventResponse.AdminResponses;
+using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Enums;
 using EventMarketplace.Infrastructure.DAL.DbOperations;
@@ -42,7 +43,9 @@ public class GetAdminEventsQueryHandler(
                     StatusDisplayName = x.EventStatus.GetDisplayName()
                 },
                 Address = x.LocationType == LocationType.Address ? x.Address.ToString() : x.EventPlaceDescription,
-                Duration = x.DurationOfTheEvent.ToString(),
+                Duration = DurationUtils.DurationCalculate(x.DurationOfTheEvent.StartEvent, x.DurationOfTheEvent.EndEvent),
+                Start = x.DurationOfTheEvent.StartEvent.ToString("dd.MM.yyyy, hh:mm"),
+                End = x.DurationOfTheEvent.EndEvent.ToString("dd.MM.yyyy, hh:mm"),
                 ImageUrl = x.ImageUrl,
                 FullName = x.Organizer.FullName.ToString(),
                 Email = x.Organizer.EmailAddress.ToString(),

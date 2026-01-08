@@ -26,7 +26,7 @@ public static class AdminSqlQueries
                                           FROM "Events" e 
                                           JOIN "Users" u ON u."Id" = e."OrganizerId"
                                           where e."EventStatus" = @pendingStatus
-                                          Order By e."CreateAt" desc 
+                                          Order By e."CreatedAt" desc 
                                           limit 5; 
                                       
                                           SELECT COUNT(*) AS PendingEventsCount FROM "Events" WHERE "EventStatus" = @pendingStatus;

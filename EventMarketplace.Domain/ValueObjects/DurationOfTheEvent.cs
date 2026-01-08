@@ -30,6 +30,6 @@ public record DurationOfTheEvent
 
     public override string ToString()
     {
-        return $"{StartEvent} - {EndEvent}";
+        return $"{StartEvent.ToString("dd.MM.yyyy hh:mm")} - {EndEvent.ToString("dd.MM.yyyy hh:mm")}";
     }
 }
