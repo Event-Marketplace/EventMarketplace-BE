@@ -13,23 +13,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventMarketplace.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EventController(IMediator mediator) : ControllerBase
     {
+        #region GET
+
         [HttpGet]
         public async Task<IActionResult> GetAllEvents([FromQuery] GetEventsQuery query)
         {
             return Ok(await mediator.Send(query));
         }
 
-        [Authorize]
+        [Authorize(Roles = "Organizer")]
         [HttpGet("organizer")]
         public async Task<IActionResult> GetOrganizerEvents([FromQuery] GetOrganizerEventsQuery query)
         {
             return Ok(await mediator.Send(query));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("admin")]
         public async Task<IActionResult> GetAdminEvents([FromQuery] GetAdminEventsQuery query)
         {
@@ -48,7 +52,11 @@ namespace EventMarketplace.Controllers
             return Ok(mediator.Send(new GetEventStatusesQuery()));
         }
 
-        [Authorize]
+
+        #endregion
+
+        #region POST
+
         [HttpPost]
         public async Task<IActionResult> AddNewEvent([FromForm] CreateEventDto Dto)
         {
@@ -57,6 +65,10 @@ namespace EventMarketplace.Controllers
             return Created();
         }
 
+        #endregion
+       
+        #region PUT
+        
         [HttpPut("submit-event/{eventId:guid}")]
         public async Task<IActionResult> SubmitEventToAdmin([FromRoute] Guid eventId)
         {
@@ -64,6 +76,10 @@ namespace EventMarketplace.Controllers
             await mediator.Send(command);
             return NoContent();
         }
+        
+        #endregion
+
+        #region PATCH
 
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventDto Dto)
@@ -74,12 +90,20 @@ namespace EventMarketplace.Controllers
             return NoContent();
         }
 
+        #endregion
+
+        #region DELETE
+
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
         {
             await mediator.Send(new DeleteEventCommand(id));
             return NoContent();
         }
+
+        #endregion
+      
+       
         
     }
 }
