@@ -19,7 +19,9 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     }
 
     public async Task<Event> GetEventByIdAsync(Guid id)
-        => await context.Events.SingleOrDefaultAsync(x => x.Id == id);
+        => await context.Events
+            .Include(x => x.EventComments)
+            .SingleOrDefaultAsync(x => x.Id == id);
 
     public async Task DeleteEventByIdAsync(Guid id)
     {
@@ -30,5 +32,10 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     {
         context.Events.Update(@event);
         return Task.CompletedTask;
+    }
+
+    public async Task<bool> CheckIsEventExist(Guid eventId)
+    {
+        return await context.Events.AnyAsync(x => x.Id == eventId);
     }
 }

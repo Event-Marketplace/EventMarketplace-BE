@@ -10,5 +10,16 @@ public class EventComment : BaseEntity
 
     public Guid EventId { get; set; }
     public Event Event { get; set; }
-    
+
+
+    public static EventComment Create(Guid eventId, Guid userId, string content)
+    {
+        return new EventComment()
+        {
+            Content = content,
+            EventId = eventId,
+            UserId = userId,
+            CreatedAt = DateTime.UtcNow,
+        };
+    }
 }

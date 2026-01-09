@@ -68,7 +68,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasIndex("OrganizerId");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.EventComment", b =>
@@ -99,7 +99,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventComments");
+                    b.ToTable("EventComments", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.RefreshToken", b =>
@@ -134,7 +134,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.Role", b =>
@@ -155,7 +155,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.User", b =>
@@ -176,7 +176,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.UserRole", b =>
@@ -191,7 +191,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.Event", b =>
@@ -225,7 +225,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("EventId");
 
-                            b1.ToTable("Events");
+                            b1.ToTable("Events", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("EventId");
@@ -246,7 +246,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("EventId");
 
-                            b1.ToTable("Events");
+                            b1.ToTable("Events", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("EventId");
@@ -315,7 +315,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -333,7 +333,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -354,7 +354,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -371,7 +371,7 @@ namespace EventMarketplace.Infrastructure.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users");
+                            b1.ToTable("Users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

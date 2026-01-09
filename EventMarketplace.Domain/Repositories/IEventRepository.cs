@@ -9,4 +9,5 @@ public interface IEventRepository
     Task<Event> GetEventByIdAsync(Guid id);
     Task DeleteEventByIdAsync(Guid id);
     Task UpdateEventAsync(Event @event);
+    Task<bool> CheckIsEventExist(Guid eventId);
 }

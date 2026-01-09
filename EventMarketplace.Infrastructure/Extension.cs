@@ -14,6 +14,7 @@ public static class Extension
     {
         services.AddPostgres();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddSignalR();
         return services;
     }
 }
