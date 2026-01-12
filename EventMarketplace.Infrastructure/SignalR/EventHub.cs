@@ -4,10 +4,12 @@ using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace EventMarketplace.Application.Utils.SignalR;
 
+[Authorize(Roles = "Admin,Organizer")]
 public class EventHub(IMediator mediator, IUserService userService, IEventCommentRepository eventCommentRepository) : Hub
 {
     public async Task RejectEvent(Guid eventId, string comment)
@@ -16,24 +18,24 @@ public class EventHub(IMediator mediator, IUserService userService, IEventCommen
         await Clients.Group($"Event_{eventId}").SendAsync("RejectedEvent", eventId, comment, userService.GetUserIdFromContext());
     }
     
-    public async Task AddComment(Guid eventId, string comment)
+    public async Task AddComment(Guid eventId, string comment, string currentContext)
     {
-        await mediator.Send(new AddEventCommentCommand(eventId, comment));
+        var lastCommentId = await mediator.Send<Guid>(new AddEventCommentCommand(eventId, comment, currentContext));
 
         var currentUserId = userService.GetUserIdFromContext();
-        var latestComment = await eventCommentRepository.GetLastCommentByEventAndUser(eventId, currentUserId);
+        var latestComment = await eventCommentRepository.GetEventCommentByIdAsync(lastCommentId);
         
         var newComment = new EventCommentResponse()
         {
             Id = latestComment.Id,
             Content = latestComment.Content,
             User = latestComment.User.FullName.ToString(),
-            CreatedAt = latestComment.CreatedAt.ToString("dd.MM.yyyy hh:ss"),
+            CreatedAt = latestComment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy hh:ss"),
             EventId = latestComment.EventId,
             UserId = latestComment.UserId
         };
         
-        await Clients.Group($"Event_{eventId}").SendAsync("ReceiveComment", newComment);
+        await Clients.OthersInGroup($"Event_{eventId}").SendAsync("ReceiveComment", newComment);
     }
 
     

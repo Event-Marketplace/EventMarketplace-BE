@@ -9,13 +9,13 @@ public class TransactionBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork) : 
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (request is not ICommand) return await next();
+        if (request is not ICommand) return await next(cancellationToken);
 
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var response = await next();
+            var response = await next(cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);
             return response;
         }

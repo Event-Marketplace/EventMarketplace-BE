@@ -38,4 +38,8 @@ public class EventPostgresRepository(EventMarketplaceDbContext context) : IEvent
     {
         return await context.Events.AnyAsync(x => x.Id == eventId);
     }
+
+    public async Task<bool> ExistsByIdAndOwner(Guid eventId, Guid ownerId)
+        => await context.Events.AnyAsync(x => x.Id == eventId && x.OrganizerId == ownerId);
+    
 }
