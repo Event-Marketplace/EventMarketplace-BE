@@ -21,4 +21,6 @@ public class EventResponse
     public string LocationType { get; set; }
     public AddressResponse? AddressResponse { get; set; }
     public string? DescriptionEventPlace { get; set; }
+    public List<EventCommentResponse> Comments { get; set; } = [];
+    public bool WasRead { get; set; }
 }

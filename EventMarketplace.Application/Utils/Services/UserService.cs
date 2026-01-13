@@ -39,6 +39,6 @@ public class UserService(IHttpContextAccessor accessor, IEventRepository eventRe
 
     public async Task<bool> CanUserAccessEvent(Guid eventId, Guid userId)
     {
-        return !await eventRepository.ExistsByIdAndOwner(eventId, userId);
+        return await eventRepository.ExistsByIdAndOwner(eventId, userId);
     }
 }

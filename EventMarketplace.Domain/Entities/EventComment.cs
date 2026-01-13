@@ -22,4 +22,9 @@ public class EventComment : BaseEntity
             CreatedAt = DateTime.UtcNow,
         };
     }
+
+    public void SetReadComment()
+    {
+        WasReadByAdmin = true;
+    }
 }

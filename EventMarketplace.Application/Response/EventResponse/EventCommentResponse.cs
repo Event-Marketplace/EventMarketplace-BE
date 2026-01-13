@@ -8,4 +8,5 @@ public class EventCommentResponse
     public string Content { get; set; }
     public string User { get; set; }
     public string CreatedAt { get; set; }
+    public bool WasRead { get; set; }
 }

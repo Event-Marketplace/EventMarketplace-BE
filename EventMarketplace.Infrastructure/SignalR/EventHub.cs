@@ -32,10 +32,11 @@ public class EventHub(IMediator mediator, IUserService userService, IEventCommen
             User = latestComment.User.FullName.ToString(),
             CreatedAt = latestComment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy hh:ss"),
             EventId = latestComment.EventId,
-            UserId = latestComment.UserId
+            UserId = latestComment.UserId,
+            WasRead = true
         };
         
-        await Clients.OthersInGroup($"Event_{eventId}").SendAsync("ReceiveComment", newComment);
+        await Clients.Group($"Event_{eventId}").SendAsync("ReceiveComment", eventId, newComment);
     }
 
     
@@ -47,5 +48,11 @@ public class EventHub(IMediator mediator, IUserService userService, IEventCommen
     public async Task LeaveEventGroup(Guid eventId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Event_{eventId}");
+    }
+
+    public async Task ReadComments(Guid eventId)
+    {
+        await mediator.Send(new ReadCommentCommand(eventId));
+        await Clients.Group($"Event_{eventId}").SendAsync("CommentsRead", eventId);
     }
 }

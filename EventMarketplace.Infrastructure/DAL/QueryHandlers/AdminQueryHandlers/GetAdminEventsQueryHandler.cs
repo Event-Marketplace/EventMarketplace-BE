@@ -57,7 +57,8 @@ public class GetAdminEventsQueryHandler(
                     User = ec.User.FullName.ToString(),
                     CreatedAt = ec.CreatedAt.ToString("dd.MM.yyyy hh:ss"),
                     EventId = ec.EventId,
-                    UserId = ec.UserId
+                    UserId = ec.UserId,
+                    WasRead = ec.WasReadByAdmin
                 }).ToList()
                 
             }).ToListAsync(cancellationToken: cancellationToken);
