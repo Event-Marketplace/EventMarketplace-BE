@@ -12,12 +12,6 @@ namespace EventMarketplace.Application.Utils.SignalR;
 [Authorize(Roles = "Admin,Organizer")]
 public class EventHub(IMediator mediator, IUserService userService, IEventCommentRepository eventCommentRepository) : Hub
 {
-    public async Task RejectEvent(Guid eventId, string comment)
-    {
-        await mediator.Send(new RejectEventCommand(eventId, comment));
-        await Clients.Group($"Event_{eventId}").SendAsync("RejectedEvent", eventId, comment, userService.GetUserIdFromContext());
-    }
-    
     public async Task AddComment(Guid eventId, string comment, string currentContext)
     {
         var lastCommentId = await mediator.Send<Guid>(new AddEventCommentCommand(eventId, comment, currentContext));

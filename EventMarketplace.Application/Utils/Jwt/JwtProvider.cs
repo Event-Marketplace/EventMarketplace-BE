@@ -12,10 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace EventMarketplace.Application.Utils.Jwt;
 
-public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository userRepository) : IJwtProvider
+public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository userRepository, HttpClient client) : IJwtProvider
 {
     public string GenerateToken(User user)
     {
+        client.GetAsync("/api/Admin/alerts");
         var userRolesNames = userRepository.GetUserRoles(user.Id);
         
         var claims = new List<Claim>()

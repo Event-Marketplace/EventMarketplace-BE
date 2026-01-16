@@ -4,6 +4,7 @@ using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
+using EventMarketplace.Application.Services.Users.Get;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Application.Utils.Jwt;
@@ -85,6 +86,7 @@ public static class Extensions
         services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+        services.AddScoped<IGetUserUseCase, GetUserUseCase>();
         
         //ustawienie limitera
         services.AddRateLimiter(opt =>

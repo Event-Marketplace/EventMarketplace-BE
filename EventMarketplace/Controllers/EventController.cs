@@ -21,6 +21,7 @@ namespace EventMarketplace.Controllers
     {
         #region GET
 
+        [ResponseCache(Duration = 60)]
         [HttpGet]
         public async Task<IActionResult> GetAllEvents([FromQuery] GetEventsQuery query)
         {
@@ -84,6 +85,13 @@ namespace EventMarketplace.Controllers
         {
             var command = new ApproveEventCommand(eventId);
             await mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpPut("reject-event/{eventId:guid}")]
+        public async Task<IActionResult> RejectEvent([FromRoute] Guid eventId, [FromBody] RejectEventCommand command)
+        {
+            await mediator.Send(command with { EventId = eventId });
             return NoContent();
         }
         

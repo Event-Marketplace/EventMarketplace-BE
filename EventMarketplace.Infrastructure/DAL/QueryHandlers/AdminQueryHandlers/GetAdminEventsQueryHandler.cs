@@ -59,7 +59,8 @@ public class GetAdminEventsQueryHandler(
                     EventId = ec.EventId,
                     UserId = ec.UserId,
                     WasRead = ec.WasReadByAdmin
-                }).ToList()
+                }).ToList(),
+                RejectionReason = x.RejectionReason
                 
             }).ToListAsync(cancellationToken: cancellationToken);
         

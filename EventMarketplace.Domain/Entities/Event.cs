@@ -18,6 +18,7 @@ public class Event : BaseEntity
     public LocationType LocationType { get; set; }
     public Address? Address { get; set; }
     public string? EventPlaceDescription { get; set; }
+    public string? RejectionReason { get; set; }
     public ICollection<EventComment> EventComments { get; set; } = new List<EventComment>();
     
     public static Event Create(string title, string description, double price, int availableTickets, 
@@ -53,17 +54,10 @@ public class Event : BaseEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void RejectEvent(string content, Guid userId)
+    public void RejectEvent(string reason)
     {
         EventStatus = EventStatus.Rejected;
+        RejectionReason = reason;
         UpdatedAt = DateTime.UtcNow;
-        
-        EventComments.Add(new EventComment()
-        {
-            Content = content,
-            CreatedAt = DateTime.UtcNow,
-            EventId = this.Id,
-            UserId = userId
-        });
     }
 }

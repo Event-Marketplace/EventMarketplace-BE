@@ -16,12 +16,13 @@ public class RejectEventCommandHandler(
     {
         var eventToApprove = await unitOfWork.Events.GetEventByIdAsync(request.EventId) ??
                              throw new AppException("Event not found.");
-
+        
         var currentUserId = userService.GetUserIdFromContext();
+        if (!userService.IsInRole(RoleType.Admin)) throw new AppException("User has not specified role.");
         
         if(eventToApprove.EventStatus == EventStatus.Rejected) throw new AppException("Event already rejected!");
-        eventToApprove.RejectEvent(request.Comment,currentUserId);
-
+        eventToApprove.RejectEvent(request.RejectionReason);
+        
         logger.LogInformation($"Event was rejected, event ID: {request.EventId})");
     }
 }
