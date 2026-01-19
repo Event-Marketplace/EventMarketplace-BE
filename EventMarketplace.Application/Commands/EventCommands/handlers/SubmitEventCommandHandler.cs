@@ -20,4 +20,5 @@ public class SubmitEventCommandHandler(IUnitOfWork unitOfWork, ILogger<SubmitEve
         @event.SubmitEventToAdminVerification();
         logger.LogInformation($"Poprawnie zmieniono status wydarzenia o id: {request.EventId}");
     }
+    
 }

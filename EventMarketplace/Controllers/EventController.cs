@@ -1,5 +1,6 @@
 
 using EventMarketplace.Application.Commands.EventCommands;
+using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
 using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 using EventMarketplace.Application.Commands.EventCommands.EditEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
@@ -13,23 +14,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventMarketplace.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EventController(IMediator mediator) : ControllerBase
     {
+        #region GET
+
+        [ResponseCache(Duration = 60)]
         [HttpGet]
         public async Task<IActionResult> GetAllEvents([FromQuery] GetEventsQuery query)
         {
             return Ok(await mediator.Send(query));
         }
 
-        [Authorize]
+        [Authorize(Roles = "Organizer")]
         [HttpGet("organizer")]
         public async Task<IActionResult> GetOrganizerEvents([FromQuery] GetOrganizerEventsQuery query)
         {
             return Ok(await mediator.Send(query));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("admin")]
         public async Task<IActionResult> GetAdminEvents([FromQuery] GetAdminEventsQuery query)
         {
@@ -48,7 +54,11 @@ namespace EventMarketplace.Controllers
             return Ok(mediator.Send(new GetEventStatusesQuery()));
         }
 
-        [Authorize]
+
+        #endregion
+
+        #region POST
+
         [HttpPost]
         public async Task<IActionResult> AddNewEvent([FromForm] CreateEventDto Dto)
         {
@@ -57,6 +67,10 @@ namespace EventMarketplace.Controllers
             return Created();
         }
 
+        #endregion
+       
+        #region PUT
+        
         [HttpPut("submit-event/{eventId:guid}")]
         public async Task<IActionResult> SubmitEventToAdmin([FromRoute] Guid eventId)
         {
@@ -64,6 +78,26 @@ namespace EventMarketplace.Controllers
             await mediator.Send(command);
             return NoContent();
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("approve-event/{eventId:guid}")]
+        public async Task<IActionResult> ApproveEvent([FromRoute] Guid eventId)
+        {
+            var command = new ApproveEventCommand(eventId);
+            await mediator.Send(command);
+            return NoContent();
+        }
+
+        [HttpPut("reject-event/{eventId:guid}")]
+        public async Task<IActionResult> RejectEvent([FromRoute] Guid eventId, [FromBody] RejectEventCommand command)
+        {
+            await mediator.Send(command with { EventId = eventId });
+            return NoContent();
+        }
+        
+        #endregion
+
+        #region PATCH
 
         [HttpPatch("{id:guid}")]
         public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventDto Dto)
@@ -74,12 +108,20 @@ namespace EventMarketplace.Controllers
             return NoContent();
         }
 
+        #endregion
+
+        #region DELETE
+
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
         {
             await mediator.Send(new DeleteEventCommand(id));
             return NoContent();
         }
+
+        #endregion
+      
+       
         
     }
 }

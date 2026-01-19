@@ -16,6 +16,9 @@ namespace EventMarketplace.Controllers
         IMediator mediator
         ) : ControllerBase
     {
+
+       
+        
         [HttpGet("user-info")]
         public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
         {

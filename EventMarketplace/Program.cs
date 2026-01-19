@@ -5,6 +5,7 @@ using DotNetEnv;
 using EventMarketplace.Application;
 using EventMarketplace.Application.Commands.EventCommands.Handlers;
 using EventMarketplace.Application.Mapper;
+using EventMarketplace.Application.Utils.SignalR;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.DAL.QueryHandlers;
 using EventMarketplace.Infrastructure.Middleware;
@@ -87,6 +88,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();   
 }
 
+app.MapHub<EventHub>("/eventHub");
 
 app.Run();
 

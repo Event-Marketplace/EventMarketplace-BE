@@ -11,6 +11,7 @@ public class TestUnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IA
     public IEventRepository Events => new EventPostgresRepository(context);
     public IAuthRepository Auths => new AuthRepository(context);
     public IRoleRepository Roles => new RoleRepository(context);
+    public IEventCommentRepository EventComments { get; } = new EventCommentRepository(context);
 
     public Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         => Task.CompletedTask;

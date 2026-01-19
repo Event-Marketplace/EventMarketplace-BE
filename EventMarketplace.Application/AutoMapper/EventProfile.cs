@@ -35,7 +35,13 @@ public class EventProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.DurationOfTheEvent.EndEvent))
             .ForMember(dest => dest.StatusDisplayName, opt => opt.MapFrom(src => src.EventStatus.GetDisplayName()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EventStatus.ToString()))
-            .ForMember(dest => dest.LocationType, opt => opt.MapFrom(src => src.LocationType.ToString()));
+            .ForMember(dest => dest.LocationType, opt => opt.MapFrom(src => src.LocationType.ToString()))
+            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.EventComments));
+
+        CreateMap<EventComment, EventCommentResponse>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User.FullName))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")))
+            .ForMember(dest => dest.WasRead, opt  => opt.MapFrom(src => src.WasReadByAdmin));
 
     }
 }

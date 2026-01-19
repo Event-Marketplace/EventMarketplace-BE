@@ -49,11 +49,30 @@ public static class Extensions
                     RequireAudience = true,
                     RequireSignedTokens = true,
                 };
+                
+                // DODAJ TO:
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        // pobierz token z query string, jeśli to połączenie do SignalR
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/eventHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         #endregion
 
         services.AddScoped<IBlobStorageService, BlobStorageService>();
+        services.AddScoped<IUserService, UserService>();
         
         var protocol = Environment.GetEnvironmentVariable("DEFAULT_PROTOCOL");
         var accountName = Environment.GetEnvironmentVariable("ACCOUNT_NAME");

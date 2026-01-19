@@ -11,8 +11,10 @@ public class AdminEventResponse
     public string End { get; set; }
     public string ImageUrl { get; set; }
     public string? Address { get; set; }
+    public string? RejectionReason { get; set; }
     public EventStatusResponse EventStatus { get; set; }
 
+    public List<EventCommentResponse> Comments { get; set; }
     //organizer
     public string FullName { get; set; }
     public string Email { get; set; }

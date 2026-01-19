@@ -49,7 +49,18 @@ public class GetAdminEventsQueryHandler(
                 ImageUrl = x.ImageUrl,
                 FullName = x.Organizer.FullName.ToString(),
                 Email = x.Organizer.EmailAddress.ToString(),
-                Phone = x.Organizer.PhoneNumber.ToString()
+                Phone = x.Organizer.PhoneNumber.ToString(),
+                Comments = x.EventComments.Select(ec => new EventCommentResponse()
+                {
+                    Id = ec.Id,
+                    Content = ec.Content,
+                    User = ec.User.FullName.ToString(),
+                    CreatedAt = ec.CreatedAt.ToString("dd.MM.yyyy hh:ss"),
+                    EventId = ec.EventId,
+                    UserId = ec.UserId,
+                    WasRead = ec.WasReadByAdmin
+                }).ToList(),
+                RejectionReason = x.RejectionReason
                 
             }).ToListAsync(cancellationToken: cancellationToken);
         

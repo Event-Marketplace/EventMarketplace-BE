@@ -18,7 +18,8 @@ public class Event : BaseEntity
     public LocationType LocationType { get; set; }
     public Address? Address { get; set; }
     public string? EventPlaceDescription { get; set; }
-    public ICollection<EventComment> EventComments { get; set; } = [];
+    public string? RejectionReason { get; set; }
+    public ICollection<EventComment> EventComments { get; set; } = new List<EventComment>();
     
     public static Event Create(string title, string description, double price, int availableTickets, 
         DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)
@@ -44,5 +45,19 @@ public class Event : BaseEntity
     public void SubmitEventToAdminVerification()
     {
         EventStatus = EventStatus.Submitted;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ApproveEvent()
+    {
+        EventStatus = EventStatus.Aproved;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void RejectEvent(string reason)
+    {
+        EventStatus = EventStatus.Rejected;
+        RejectionReason = reason;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

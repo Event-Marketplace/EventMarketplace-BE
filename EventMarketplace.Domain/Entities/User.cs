@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Data.Common;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 

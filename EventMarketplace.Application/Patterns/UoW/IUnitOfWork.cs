@@ -8,6 +8,7 @@ public interface IUnitOfWork : IDisposable
     IEventRepository Events { get; }
     IAuthRepository Auths { get; }
     IRoleRepository Roles { get; }
+    IEventCommentRepository EventComments { get; }
     Task BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task RollbackAsync(CancellationToken cancellationToken = default);
     Task CommitAsync(CancellationToken cancellationToken = default);
