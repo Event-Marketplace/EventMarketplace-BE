@@ -3,7 +3,6 @@ using EventMarketplace.Application.Commands.UserCommands;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.UserResponse;
-using EventMarketplace.Application.Services.Users.Get;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +17,7 @@ namespace EventMarketplace.Controllers
         ) : ControllerBase
     {
 
-        [HttpGet("username-from-service/{userId:int}")]
-        public async Task<ActionResult<string>> GetUser([FromRoute] int userId, [FromServices] IGetUserUseCase getUserUseCase)
-        {
-            return Ok(getUserUseCase.GetUserById(userId));
-        }
+       
         
         [HttpGet("user-info")]
         public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
