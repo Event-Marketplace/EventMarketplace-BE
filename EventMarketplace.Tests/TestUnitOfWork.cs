@@ -21,6 +21,10 @@ public class TestUnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IA
 
     public Task CommitAsync(CancellationToken cancellationToken = default)
         => context.SaveChangesAsync(cancellationToken);
+    
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        => context.SaveChangesAsync(cancellationToken);
+    
 
     public void Dispose()
     {

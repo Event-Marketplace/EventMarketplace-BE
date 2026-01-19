@@ -22,6 +22,7 @@ public class RejectEventCommandHandler(
         
         if(eventToApprove.EventStatus == EventStatus.Rejected) throw new AppException("Event already rejected!");
         eventToApprove.RejectEvent(request.RejectionReason);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         
         logger.LogInformation($"Event was rejected, event ID: {request.EventId})");
     }

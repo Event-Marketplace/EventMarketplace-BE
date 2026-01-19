@@ -21,6 +21,17 @@ public class UserService(IHttpContextAccessor accessor, IEventRepository eventRe
         return Guid.Parse(value);
     }
 
+    public string GetUserEmailFromContext()
+    {
+        var value = accessor?.HttpContext?.User.FindFirst(ClaimTypes.Email).Value;
+        if (value == null)
+        {
+            throw new AppException("User is not Authenticated!");
+        }
+
+        return value;
+    }
+
     public bool IsInRole(RoleType roleType)
     {
         var claimsPrincipal = accessor?.HttpContext?.User;

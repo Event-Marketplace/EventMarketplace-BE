@@ -32,6 +32,11 @@ public class UnitOfWork(EventMarketplaceDbContext context) : IUnitOfWork, IAsync
         await _transaction.CommitAsync(cancellationToken);
     }
 
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     public void Dispose()
     {
         _transaction.Dispose();
