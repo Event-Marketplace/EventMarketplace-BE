@@ -4,4 +4,4 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace EventMarketplace.Application.Commands.EventCommands;
 
-public record SubmitEventCommand([SwaggerIgnore] Guid EventId) : ICommand;
+public record SubmitEventCommand([SwaggerIgnore] Guid EventId) : ITransactionalCommand;
