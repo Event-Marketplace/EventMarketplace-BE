@@ -15,7 +15,6 @@ using Microsoft.Extensions.Logging;
 namespace EventMarketplace.Application.Commands.EventCommands.Handlers;
 
 public class CreateEventCommandHandler(
-    IHttpContextAccessor contextAccessor,
     IUnitOfWork unitOfWork,
     IUserService userService,
     EventFileIUploader eventFileIUploader,
