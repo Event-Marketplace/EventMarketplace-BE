@@ -20,7 +20,7 @@ Podstawowe funkcjonalności dla roli Organizatora zostały już zaimplementowane
 - CI/CD + Docker
 - Upload zdjęć wydarzeń do Azure Blob Storage
 - Dapper do read modeli (statystyki, krótkie powiadomienia / alerty na dashboardzie administratora)
-
+- Wykorzystanie SignalR'a do dwukierunkowej komunikacji w czasie rzeczywistym (komentarze do wydarzenia Admin <-> Organizer)
 ---
 
 ## Architecture
@@ -76,7 +76,6 @@ Zależności pomiędzy warstwami są skierowane do wewnątrz, co ułatwia testow
 
 ## Future improvements
 
-- SignalR dla dwukierunkowej komunikacji w czasie rzeczywistym (komentarze do eventu Admin <-> Organizer)
 - Możliwość wyświetlania odległości wydarzenia od miejsca pobytu uczestnika (zewnętrzne api, generowanie Lat i Lon)
 - Asynchroniczna komunikacja (RabbitMQ / Kafka)
 - Background jobs dla maili
