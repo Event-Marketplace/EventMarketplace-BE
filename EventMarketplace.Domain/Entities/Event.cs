@@ -19,6 +19,7 @@ public class Event : BaseEntity
     public Address? Address { get; set; }
     public string? EventPlaceDescription { get; set; }
     public string? RejectionReason { get; set; }
+    public bool IsDeleted { get; set; } = false;
     public ICollection<EventComment> EventComments { get; set; } = new List<EventComment>();
     
     public static Event Create(string title, string description, double price, int availableTickets, 

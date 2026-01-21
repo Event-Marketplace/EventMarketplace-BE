@@ -26,7 +26,7 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
             .Include(x => x.Organizer)
             .Include(x => x.EventComments)
             .ThenInclude(x => x.User)
-            .Where(x => x.OrganizerId == organizer.Id)
+            .Where(x => !x.IsDeleted && x.OrganizerId == organizer.Id)
             .FilterEvents(request)
             .OrderByDescending(x => x.CreatedAt);
 

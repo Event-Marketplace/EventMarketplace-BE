@@ -17,5 +17,5 @@ public enum EventStatus
     [Display(Name = "Usunięte przez organizatora")]
     DeletedByOrganizer,
     [Display(Name = "Usunięte przez administratora")]
-    DeletedByAdmin,
+    DeletedByAdmin
 }

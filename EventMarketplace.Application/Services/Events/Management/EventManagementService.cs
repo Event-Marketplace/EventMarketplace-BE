@@ -49,7 +49,7 @@ public class EventManagementService(
 
             if (eventToDelete.EventStatus == EventStatus.Aproved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
             await eventFileUploader.DeleteEventImageAsync(eventToDelete.ImageUrl);
-            await unitOfWork.Events.DeleteEventAsync(eventToDelete);
+            eventToDelete.IsDeleted = true;
             await unitOfWork.CommitAsync();
         }
         catch (Exception e)
