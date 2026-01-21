@@ -1,3 +1,4 @@
+using EventMarketplace.Application.Commands.EventCommands.AdminUseCases;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Utils;
@@ -5,7 +6,7 @@ using EventMarketplace.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace EventMarketplace.Application.Commands.EventCommands.AdminFunctions.handlers;
+namespace EventMarketplace.Application.Commands.EventCommands.AdminUseCases.handlers;
 
 public class RejectEventCommandHandler(
     IUnitOfWork unitOfWork,

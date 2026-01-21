@@ -4,7 +4,7 @@ using EventMarketplace.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace EventMarketplace.Application.Commands.EventCommands.AdminFunctions.handlers;
+namespace EventMarketplace.Application.Commands.EventCommands.AdminUseCases.handlers;
 
 public class ApproveEventCommandHandler(IUnitOfWork unitOfWork, ILogger<ApproveEventCommandHandler> logger) : IRequestHandler<ApproveEventCommand>
 {
