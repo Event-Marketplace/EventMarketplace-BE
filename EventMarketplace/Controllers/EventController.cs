@@ -1,7 +1,6 @@
 
 using EventMarketplace.Application.Commands.EventCommands;
 using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
-using EventMarketplace.Application.Commands.EventCommands.EditEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
