@@ -14,7 +14,7 @@ public sealed class GetEventsQueryHandler(EventMarketplaceDbContext context) : I
     {
         var events = context.Events
             .Include(x => x.Organizer)
-            .Where(x => x.EventStatus == EventStatus.Aproved)
+            .Where(x => x.EventStatus == EventStatus.Approved)
             .FilterEvents(request)
             .OrderBy(x => x.DurationOfTheEvent.StartEvent);
             

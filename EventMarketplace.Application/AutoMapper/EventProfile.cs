@@ -3,6 +3,7 @@ using AutoMapper;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.EventResponse;
+using EventMarketplace.Application.Services.Events.CreateEvent;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
@@ -13,7 +14,7 @@ public class EventProfile : Profile
 {
     public EventProfile()
     {
-        CreateMap<EditEventDto, Event>()
+        CreateMap<EditEventRequest, Event>()
             .ForMember(dest => dest.Address,
                 opt =>
                 {

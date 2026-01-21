@@ -13,11 +13,11 @@ public class ApproveEventCommandHandler(IUnitOfWork unitOfWork, ILogger<ApproveE
         var eventToApprove = await unitOfWork.Events.GetEventByIdAsync(request.EventId) ??
                              throw new AppException("Event not found.");
 
-        if(eventToApprove.EventStatus == EventStatus.Aproved) throw new AppException("Event already approved!");
+        if(eventToApprove.EventStatus == EventStatus.Approved) throw new AppException("Event already approved!");
         eventToApprove.ApproveEvent();
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation(
-            $"Zmieniono status z {EventStatus.Submitted.GetDisplayName()} na {EventStatus.Aproved.GetDisplayName()}. Wydarzenie o id: {request.EventId})");
+            $"Zmieniono status z {EventStatus.Submitted.GetDisplayName()} na {EventStatus.Approved.GetDisplayName()}. Wydarzenie o id: {request.EventId})");
     }
 }

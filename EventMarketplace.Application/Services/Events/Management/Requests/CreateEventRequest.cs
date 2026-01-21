@@ -5,12 +5,11 @@ namespace EventMarketplace.Application.Services.Events.CreateEvent;
 
 public class CreateEventRequest
 {
-    public Guid Id { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public DateTime StartDateTime { get; set; }
     public DateTime EndDateTime { get; set; }
-    public double Price { get; set; }
+    public decimal Price { get; set; }
     public int AvailableTicketsCount { get; set; }
     public IFormFile Image{ get; set; }
     public LocationType LocationType { get; set; }

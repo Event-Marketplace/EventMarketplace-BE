@@ -14,7 +14,7 @@ public class AdminRepository(IDbConnection connection) : IAdminRepository
         => await connection.QuerySingleAsync<AdminStats>(AdminSqlQueries.AdminStats, 
             new
             {
-                approvedStatus = EventStatus.Aproved,
+                approvedStatus = EventStatus.Approved,
                 rejectedStatus = EventStatus.Rejected,
                 pendingStatus = EventStatus.Submitted,
                 organizerRoleType = RoleType.Organizer,

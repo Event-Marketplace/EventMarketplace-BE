@@ -9,7 +9,7 @@ public enum EventStatus
     [Display(Name = "Wysłane do akceptacji")]
     Submitted,
     [Display(Name = "Aktywne")]
-    Aproved,
+    Approved,
     [Display(Name = "Odrzucone")]
     Rejected,
     [Display(Name = "Zarchiwizowane")]

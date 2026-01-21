@@ -1,3 +1,4 @@
+using AutoMapper;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
@@ -14,6 +15,7 @@ public class EventManagementService(
     IUnitOfWork unitOfWork, 
     ILogger<EventManagementService> logger,
     IUserService userService,
+    IMapper mapper,
     EventFileUploader eventFileUploader) : IEventManagementService
 {
     public async Task CreateEvent(CreateEventRequest request, CancellationToken cancellationToken)
@@ -39,24 +41,44 @@ public class EventManagementService(
         logger.LogInformation($"Utworzono wydarzenie o ID - {newEvent.Id}");
     }
 
-    public async Task DeleteEvent(Guid eventId)
+    public async Task DeleteEvent(Guid eventId, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync();
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
             var eventToDelete = await unitOfWork.Events.GetEventByIdAsync(eventId) 
                                 ?? throw new AppException("Brak wydarzenia o podanym id w bazie danych.");
 
-            if (eventToDelete.EventStatus == EventStatus.Aproved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
+            if (eventToDelete.EventStatus == EventStatus.Approved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
             await eventFileUploader.DeleteEventImageAsync(eventToDelete.ImageUrl);
             eventToDelete.IsDeleted = true;
-            await unitOfWork.CommitAsync();
+            await unitOfWork.CommitAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            await unitOfWork.RollbackAsync();
+            await unitOfWork.RollbackAsync(cancellationToken);
             logger.LogError($"Delete image failed!, Event - {eventId}, error: {e.Message}");
             throw;
         }
+    }
+
+    public async Task EditEvent(EditEventRequest request, CancellationToken cancellationToken)
+    {
+        var eventToUdpate = await unitOfWork.Events.GetEventByIdAsync(request.Id) 
+                            ?? throw new AppException("Brak danego wydarzenia w bazie danych.");
+
+        mapper.Map(request, eventToUdpate);
+        
+        eventToUdpate.DurationOfTheEvent =
+            eventToUdpate.DurationOfTheEvent.Update(request.StartDateTime, request.EndDateTime);
+        
+        if (request.Image != null)
+        {
+            var newUri = await eventFileUploader.UploadOrReplaceFileAsync(eventToUdpate.ImageUrl, request.Image, cancellationToken);
+            eventToUdpate.ImageUrl = newUri;
+        }
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        logger.LogInformation($"Event update successfully, event - {eventToUdpate.Id}");
     }
 }

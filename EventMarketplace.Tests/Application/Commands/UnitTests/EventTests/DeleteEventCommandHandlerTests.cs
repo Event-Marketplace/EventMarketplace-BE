@@ -1,4 +1,4 @@
-using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
+
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Domain.Entities;
@@ -14,7 +14,7 @@ public class DeleteEventCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWork;
     private readonly Mock<IEventRepository> _eventRepo;
-    private readonly DeleteEventCommandHandler _handler;
+    //private readonly DeleteEventCommandHandler _handler;
     
     public DeleteEventCommandHandlerTests()
     {

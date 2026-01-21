@@ -1,7 +1,6 @@
 
 using EventMarketplace.Application.Commands.EventCommands;
 using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
-using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
 using EventMarketplace.Application.Commands.EventCommands.EditEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;
@@ -62,9 +61,9 @@ namespace EventMarketplace.Controllers
         #region POST
 
         [HttpPost]
-        public async Task<IActionResult> AddNewEvent([FromForm] CreateEventRequest request)
+        public async Task<IActionResult> AddNewEvent([FromForm] CreateEventRequest request, CancellationToken cancellationToken)
         {
-            await eventManagementService.CreateEvent(request, new CancellationToken());
+            await eventManagementService.CreateEvent(request, cancellationToken);
             return Created();
         }
 
@@ -101,11 +100,10 @@ namespace EventMarketplace.Controllers
         #region PATCH
 
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventDto Dto)
+        public async Task<IActionResult> EditEvent([FromRoute] Guid id, [FromForm] EditEventRequest request, CancellationToken cancellationToken)
         {
-            var command = new EditEventCommand(Dto);
-            command.Dto.Id = id;
-            await mediator.Send(command);
+            request.Id = id;
+            await eventManagementService.EditEvent(request, cancellationToken);
             return NoContent();
         }
 
@@ -114,9 +112,9 @@ namespace EventMarketplace.Controllers
         #region DELETE
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteEvent([FromRoute] Guid id, CancellationToken cancellationToken)
         {
-            await eventManagementService.DeleteEvent(id);
+            await eventManagementService.DeleteEvent(id, cancellationToken);
             return NoContent();
         }
 

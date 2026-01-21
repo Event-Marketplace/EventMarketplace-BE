@@ -8,7 +8,7 @@ public class Event : BaseEntity
     public string Title { get; set; }
     public string Description { get; set; }
     public DurationOfTheEvent DurationOfTheEvent {get; set; }
-    public double Price { get; set; }
+    public decimal Price { get; set; }
     public int AvailableTickets { get; set; }
     public string ImageUrl { get; set; }
     public DateTime? UpdatedAt { get; set; }
@@ -22,7 +22,7 @@ public class Event : BaseEntity
     public bool IsDeleted { get; set; } = false;
     public ICollection<EventComment> EventComments { get; set; } = new List<EventComment>();
     
-    public static Event Create(string title, string description, double price, int availableTickets, 
+    public static Event Create(string title, string description, decimal price, int availableTickets, 
         DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)
     {
         return new Event()
@@ -51,7 +51,7 @@ public class Event : BaseEntity
 
     public void ApproveEvent()
     {
-        EventStatus = EventStatus.Aproved;
+        EventStatus = EventStatus.Approved;
         UpdatedAt = DateTime.UtcNow;
     }
 

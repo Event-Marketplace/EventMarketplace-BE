@@ -18,7 +18,7 @@ public class GetAdminEventsQueryHandler(
         var adminEvents = request.Tab switch
         {
             AdminEventListTab.Pending => context.Events.Where(x => x.EventStatus == EventStatus.Submitted),
-            AdminEventListTab.Approved => context.Events.Where(x => x.EventStatus == EventStatus.Aproved),
+            AdminEventListTab.Approved => context.Events.Where(x => x.EventStatus == EventStatus.Approved),
             AdminEventListTab.Rejected => context.Events.Where(x => x.EventStatus == EventStatus.Rejected),
             AdminEventListTab.All => context.Events
         };
