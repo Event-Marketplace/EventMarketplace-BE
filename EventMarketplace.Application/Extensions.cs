@@ -3,7 +3,7 @@ using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
-using EventMarketplace.Application.Commands.EventCommands.Handlers;
+using EventMarketplace.Application.UseCases.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Application.Utils.Jwt;
@@ -82,9 +82,11 @@ public static class Extensions
         var azureBlobConnString = $"DefaultEndpointsProtocol={protocol};AccountName={accountName};AccountKey={accountKey};EndpointSuffix={endpointSuffix}";
         services.AddSingleton(new BlobServiceClient(azureBlobConnString));
 
-        services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateEventValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+        services.AddScoped<IEventManagementService, EventManagementService>();
+        services.AddScoped<EventFileUploader>();
         
         //ustawienie limitera
         services.AddRateLimiter(opt =>

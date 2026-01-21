@@ -1,69 +1,70 @@
+using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Domain.Enums;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
-namespace EventMarketplace.Application.Commands.EventCommands.CreateEvent;
+namespace EventMarketplace.Application.UseCases.Events.CreateEvent;
 
-public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
+public class CreateEventValidator: AbstractValidator<CreateEventDto>
 {
-    private readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png"];
+     private readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png"];
     private const long _maxFileSize = 3 * 1024 * 1024;
     
-    public CreateEventCommandValidator()
+    public CreateEventValidator()
     {
-        RuleFor(x => x.Dto.Title)
+        RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Tytuł jest wymagany.")
             .MaximumLength(200).WithMessage("Tytuł może mieć maksymalnie 200 znaków.");
 
-        RuleFor(x => x.Dto.Description)
+        RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Opis jest wymagany.")
             .MaximumLength(4000).WithMessage("Opis może mieć maksymalnie 4000 znaków.");
 
-        RuleFor(x => x.Dto.Price)
+        RuleFor(x => x.Price)
             .GreaterThanOrEqualTo(1).WithMessage("Cena musi być większa lub równa 1.");
 
-        RuleFor(x => x.Dto.AvailableTicketsCount)
+        RuleFor(x => x.AvailableTicketsCount)
             .GreaterThanOrEqualTo(10).WithMessage("Dostępna liczba biletów musi być większa lub równa 10.");
 
-        RuleFor(x => x.Dto.StartDateTime)
+        RuleFor(x => x.StartDateTime)
             .Must(BeAValidDate).WithMessage("Data rozpoczęcia wydarzenia musi być datą prawidłową.")
             .GreaterThanOrEqualTo(_ => DateTime.UtcNow.AddMinutes(-1))
             .WithMessage("Data rozpoczęcia wydarzenia nie może być datą przeszłą.");
         
-        RuleFor(x => x.Dto.EndDateTime)
+        RuleFor(x => x.EndDateTime)
             .Must(BeAValidDate).WithMessage("Data zakończenia wydarzenia musi być datą prawidłową.")
-            .GreaterThan(x => x.Dto.StartDateTime)
+            .GreaterThan(x => x.StartDateTime)
             .WithMessage("Data zakończenia wydarzenia nie może być wcześniejsza od daty rozpoczęcia.");
 
-        RuleFor(x => x.Dto.Image)
+        RuleFor(x => x.Image)
             .NotNull().WithMessage("Zdjęcie wydarzenia jest wymagane.")
             .Must(file => file.Length > 0).WithMessage("Plik ze zdjęciem nie może być pusty.")
             .Must(IsAllowedSize).WithMessage("Plik jest zbyt duży. Maksymalnie 3MB.")
             .Must(IsAllowedExtension).WithMessage("Dozwolone formaty zdjęć to: .jpg, .jpeg, .png");
 
-        RuleFor(x => x.Dto.EventPlaceDescription)
+        RuleFor(x => x.EventPlaceDescription)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.DescriptionPlace)
+            .When(x => x.LocationType == LocationType.DescriptionPlace)
             .WithMessage("Musisz podać opis miejsca wydarzenia");
         
-        RuleFor(x => x.Dto.PostalCode)
+        RuleFor(x => x.PostalCode)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.Address)
+            .When(x => x.LocationType == LocationType.Address)
             .WithMessage("Kod pocztowy jest wymagany.");
         
-        RuleFor(x => x.Dto.City)
+        RuleFor(x => x.City)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.Address)
+            .When(x => x.LocationType == LocationType.Address)
             .WithMessage("Miasto jest wymagane.");
         
-        RuleFor(x => x.Dto.Street)
+        RuleFor(x => x.Street)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.Address)
+            .When(x => x.LocationType == LocationType.Address)
             .WithMessage("Ulica jest wymagana.");
         
-        RuleFor(x => x.Dto.Number)
+        RuleFor(x => x.Number)
             .NotEmpty()
-            .When(x => x.Dto.LocationType == LocationType.Address)
+            .When(x => x.LocationType == LocationType.Address)
             .WithMessage("Numer budynku/lokalu jest wymagany.");
     }
     

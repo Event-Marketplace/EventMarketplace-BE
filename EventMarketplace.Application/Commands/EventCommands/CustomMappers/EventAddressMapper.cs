@@ -1,5 +1,6 @@
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Response;
+using EventMarketplace.Application.Services.Events.CreateEvent;
 using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;
 
@@ -7,7 +8,7 @@ namespace EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 
 public static class EventAddressMapper
 {
-    public static (Address? Address, string? DescriptionPlace) MapLocationToEntity(CreateEventDto dto)
+    public static (Address? Address, string? DescriptionPlace) MapLocationToEntity(CreateEventRequest dto)
     {
         return dto.LocationType switch
         {

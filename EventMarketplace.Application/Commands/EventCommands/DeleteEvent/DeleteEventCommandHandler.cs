@@ -21,15 +21,16 @@ public class DeleteEventCommandHandler(IUnitOfWork unitOfWork, IBlobStorageServi
 
             if (eventToDelete.EventStatus == EventStatus.Aproved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
             
-            await unitOfWork.Events.DeleteEventAsync(eventToDelete);
             var imageName = eventToDelete.ImageUrl.Split('/').Last();
             await blobStorageService.RemoveImageFromAzureBlob($"{imageName}", "events");
+            
+            await unitOfWork.Events.DeleteEventAsync(eventToDelete);
             await unitOfWork.CommitAsync(cancellationToken);
         }
         catch (Exception e)
         {
             await unitOfWork.RollbackAsync(cancellationToken);
-            throw;
+            throw new AppException($"Error during delete event, errorMessage: {e.Message}");
         }
     }
 }

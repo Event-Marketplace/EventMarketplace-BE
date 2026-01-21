@@ -6,6 +6,8 @@ using EventMarketplace.Application.Commands.EventCommands.EditEvent;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
+using EventMarketplace.Application.Services.Events.CreateEvent;
+using EventMarketplace.Application.UseCases.Events.CreateEvent;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +19,7 @@ namespace EventMarketplace.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class EventController(IMediator mediator) : ControllerBase
+    public class EventController(IMediator mediator, IEventManagementService eventManagementService) : ControllerBase
     {
         #region GET
 
@@ -60,10 +62,9 @@ namespace EventMarketplace.Controllers
         #region POST
 
         [HttpPost]
-        public async Task<IActionResult> AddNewEvent([FromForm] CreateEventDto Dto)
+        public async Task<IActionResult> AddNewEvent([FromForm] CreateEventRequest request)
         {
-            var command = new CreateEventCommand(Dto);
-            await mediator.Send(command);
+            await eventManagementService.CreateEvent(request, new CancellationToken());
             return Created();
         }
 
@@ -115,7 +116,7 @@ namespace EventMarketplace.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
         {
-            await mediator.Send(new DeleteEventCommand(id));
+            await eventManagementService.DeleteEvent(id);
             return NoContent();
         }
 
