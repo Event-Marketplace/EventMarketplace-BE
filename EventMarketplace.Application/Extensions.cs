@@ -22,7 +22,6 @@ public static class Extensions
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPasswordManager, PasswordManager>();
-        services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddHttpContextAccessor();
         
         #region JwtConfiguration
@@ -70,8 +69,7 @@ public static class Extensions
             });
 
         #endregion
-
-        services.AddScoped<IBlobStorageService, BlobStorageService>();
+        
         services.AddScoped<IUserService, UserService>();
         
         var protocol = Environment.GetEnvironmentVariable("DEFAULT_PROTOCOL");

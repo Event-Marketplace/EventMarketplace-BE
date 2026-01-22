@@ -33,7 +33,7 @@ public sealed class RegisterUserCommandHandler(
         newUser.SetPassword(passwordManager.HashPassword(request.Dto.Password));
         
         await unitOfWork.Users.AddUserAsync(newUser);
-        await unitOfWork.CommitAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         logger.LogInformation($"Registered successfully user - {newUser.EmailAddress.Value}");
     }
 }

@@ -1,4 +1,6 @@
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Utils.Azure;
+using EventMarketplace.Application.Utils.Jwt;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Infrastructure.DAL;
 using EventMarketplace.Infrastructure.DAL.Repositories;
@@ -16,6 +18,9 @@ public static class Extension
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEventCommentRepository, EventCommentRepository>();
         services.AddSignalR();
+        services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<IBlobStorageService, BlobStorageService>();
+        
         return services;
     }
 }
