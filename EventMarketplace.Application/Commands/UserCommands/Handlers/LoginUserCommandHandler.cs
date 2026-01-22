@@ -19,38 +19,27 @@ public class LoginUserCommandHandler(
 {
     public async Task<JwtTokenResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
+        var userFromDb = await unitOfWork.Users.GetUserByEmailAsync(request.Dto.Email) ??
+                         throw new AppException($"User with email: {request.Dto.Email}, was not found!");
 
-        try
+        if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
+            throw new AppException("Given password is wrong!");
+
+        var jwtToken = jwtProvider.GenerateToken(userFromDb);
+        var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
+        
+        jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
+        
+        var newRefreshToken =
+            RefreshToken.Create(refreshToken.RefreshToken, refreshToken.Expires, false, userFromDb.Id);
+        await unitOfWork.Auths.AddNewRefreshTokenAsync(newRefreshToken);
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("User was logged successfully.");
+        
+        return new JwtTokenResponse()
         {
-            var userFromDb = await unitOfWork.Users.GetUserByEmailAsync(request.Dto.Email) ??
-                             throw new AppException("Użytkownik o podanym mailu nie istnieje w naszej bazie.");
-
-            if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
-                throw new AppException("Podane hasło jest nieprawidłowe.");
-
-            var jwtToken = jwtProvider.GenerateToken(userFromDb);
-            var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);
-            
-            jwtProvider.AppendRefreshToken(refreshToken.RefreshToken);
-            
-            var newRefreshToken =
-                RefreshToken.Create(refreshToken.RefreshToken, refreshToken.Expires, false, userFromDb.Id);
-            await unitOfWork.Auths.AddNewRefreshTokenAsync(newRefreshToken);
-            
-            await unitOfWork.CommitAsync(cancellationToken);
-            logger.LogInformation("Użytkownik został poprawnie zalogowany.");
-            
-            return new JwtTokenResponse()
-            {
-                TokenJwt = jwtToken
-            };
-         
-        }
-        catch (Exception e)
-        {
-            await unitOfWork.RollbackAsync(cancellationToken);
-            throw;
-        }
+            TokenJwt = jwtToken
+        };
     }
 }

@@ -19,31 +19,21 @@ public sealed class RegisterUserCommandHandler(
 {
     public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
+        if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
+            throw new AppException("This email is already busy.");
+        
+        var memberRole = await unitOfWork.Roles.GetRoleByEnumAsync(RoleType.Participant) 
+                         ?? throw new AppException($"Role: {RoleType.Participant.GetDisplayName()} not found.");
+        var newUser = User.CreateUser(request.Dto.Email);
+        newUser.AssignRole(memberRole);
 
-        try
-        {
-            if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
-                throw new AppException("Ten adres email jest już zajęty.");
-            
-            var memberRole = await unitOfWork.Roles.GetRoleByEnumAsync(RoleType.Participant) 
-                             ?? throw new AppException($"Rola: {RoleType.Participant.GetDisplayName()} nie istnieje w bazie danych.");
-            var newUser = User.CreateUser(request.Dto.Email);
-            newUser.AssignRole(memberRole);
+        if (!request.Dto.Password.Equals(request.Dto.ConfirmPassword))
+            throw new AppException("Given passwords are not the same.");
 
-            if (!request.Dto.Password.Equals(request.Dto.ConfirmPassword))
-                throw new AppException("Wprowadzone hasła nie są jednakowe.");
-
-            newUser.SetPassword(passwordManager.HashPassword(request.Dto.Password));
-            
-            await unitOfWork.Users.AddUserAsync(newUser);
-            await unitOfWork.CommitAsync(cancellationToken);
-            logger.LogInformation($"Udana rejestracja użytkownika - {newUser.EmailAddress.Value}");
-        }
-        catch (Exception e)
-        {
-            await unitOfWork.RollbackAsync(cancellationToken);
-            throw;
-        }
+        newUser.SetPassword(passwordManager.HashPassword(request.Dto.Password));
+        
+        await unitOfWork.Users.AddUserAsync(newUser);
+        await unitOfWork.CommitAsync(cancellationToken);
+        logger.LogInformation($"Registered successfully user - {newUser.EmailAddress.Value}");
     }
 }
