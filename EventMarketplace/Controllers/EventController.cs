@@ -1,6 +1,5 @@
 
 using EventMarketplace.Application.Commands.EventCommands;
-using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
 using EventMarketplace.Application.Commands.EventCommands.AdminUseCases;
 using EventMarketplace.Application.Dtos.EventDtos;
 using EventMarketplace.Application.Queries;

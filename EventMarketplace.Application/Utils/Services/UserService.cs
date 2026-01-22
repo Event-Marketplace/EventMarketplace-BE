@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace EventMarketplace.Application.Utils;
 
-public class UserService(IHttpContextAccessor accessor, IEventRepository eventRepository) : IUserService
+public class UserService(IHttpContextAccessor accessor, IEventRepository eventRepository, IUserRepository userRepository) : IUserService
 {
     public Guid GetUserIdFromContext()
     {
@@ -20,6 +20,9 @@ public class UserService(IHttpContextAccessor accessor, IEventRepository eventRe
         
         return Guid.Parse(value);
     }
+
+    public async Task<string> GetCurrentUserFullName(Guid userId)
+        => await userRepository.GetUserFullNameByIdAsync(userId);
 
     public string GetUserEmailFromContext()
     {

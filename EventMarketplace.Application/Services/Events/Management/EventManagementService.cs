@@ -2,6 +2,7 @@ using AutoMapper;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Application.Services.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
@@ -80,5 +81,51 @@ public class EventManagementService(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         logger.LogInformation($"Event update successfully, event - {eventToUdpate.Id}");
+    }
+
+    public async Task<EventCommentResponse> AddEventComment(AddEventCommentRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Comment)) throw new AppException("Content is required.");
+        if (!await unitOfWork.Events.CheckIsEventExist(request.EventId))
+            throw new AppException($"Event with id = {request.EventId} not found!");
+
+        var currentUserId = userService.GetUserIdFromContext();
+        var currentUserName = await userService.GetCurrentUserFullName(currentUserId);
+        
+        if (!userService.IsInRole(RoleType.Admin) && !userService.IsInRole(RoleType.Organizer))
+            throw new AppException("No permissions.");
+
+        if (request.CurrentContext.Equals(RoleType.Organizer.ToString()))
+        {
+            if (!await userService.CanUserAccessEvent(request.EventId, currentUserId))
+                throw new AppException("User has not access to this event");
+        }
+
+        var newComment = EventComment.Create(request.EventId, currentUserId, request.Comment);
+        await unitOfWork.EventComments.AddEventCommentAsync(newComment);
+        await unitOfWork.SaveChangesAsync();
+        logger.LogInformation($"New Comment was created successfully! CommentId = {newComment.Id}");
+
+        return new EventCommentResponse()
+        {
+            Id = newComment.Id,
+            Content = newComment.Content,
+            User = currentUserName,
+            CreatedAt = newComment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy hh:mm"),
+            EventId = newComment.EventId,
+            UserId = newComment.UserId,
+            WasRead = true
+        };
+    }
+
+    public async Task ReadEventComments(Guid eventId)
+    {
+        var currentUserId = userService.GetUserIdFromContext();
+        
+        var eventComments = await unitOfWork.EventComments
+            .GetEventCommentListByEventIdAsync(eventId, currentUserId);
+        
+        eventComments.ForEach(x => x.SetReadComment());
+        await unitOfWork.EventComments.UpdateEventCommentListAsync(eventComments); 
     }
 }
