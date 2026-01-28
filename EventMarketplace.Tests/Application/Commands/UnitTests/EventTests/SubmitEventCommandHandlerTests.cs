@@ -72,7 +72,7 @@ public class SubmitEventCommandHandlerTests
         _unitOfWork.Setup(x => x.Events.GetEventByIdAsync(newGuid)).ReturnsAsync(eventToUdpate);
 
         //act
-        var ex = await Assert.ThrowsAsync<AppException>(
+        var ex = await Assert.ThrowsAsync<EmAppException>(
             () => _handler.Handle(command, CancellationToken.None));
 
         //asserts

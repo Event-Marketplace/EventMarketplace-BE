@@ -32,7 +32,7 @@ public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository u
         var jwtExp = Environment.GetEnvironmentVariable("JWT_EXPIRES");
 
         if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience) || string.IsNullOrEmpty(jwtExp))
-            throw new AppException("Brak zmiennych środowiskowych dla tokena JWT.");
+            throw new EmAppException("Brak zmiennych środowiskowych dla tokena JWT.","NO_ENVIRONMENTS");
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         
@@ -78,7 +78,7 @@ public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository u
     {
         CheckUserSessionExist();
         var refreshToken = contextAccessor.HttpContext.Request.Cookies["refreshToken"] 
-                           ?? throw new AppException("Brak refresh token'a");
+                           ?? throw new EmAppException("Brak refresh token'a","NO_REFRESH_TOKEN");
 
         return refreshToken;
     }
@@ -95,6 +95,6 @@ public class JwtProvider(IHttpContextAccessor contextAccessor, IUserRepository u
 
     private void CheckUserSessionExist()
     {
-        if (contextAccessor.HttpContext == null) throw new AppException("Brak sesji użytkownika.");
+        if (contextAccessor.HttpContext == null) throw new EmAppException("Brak sesji użytkownika.","NO_SESSION");
     }
 }

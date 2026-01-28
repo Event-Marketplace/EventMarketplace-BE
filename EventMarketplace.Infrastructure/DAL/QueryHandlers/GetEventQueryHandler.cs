@@ -13,7 +13,7 @@ public class GetEventQueryHandler(EventMarketplaceDbContext context) : IRequestH
     public async Task<EventResponse> Handle(GetEventQuery request, CancellationToken cancellationToken)
     {
         var @event = await context.Events.SingleOrDefaultAsync(x => x.Id == request.EventId, cancellationToken) 
-                     ?? throw new AppException("Brak wydarzenia w bazie danych.");
+                     ?? throw new EmNotFoundException("Brak wydarzenia w bazie danych.");
 
         return @event.MapToEventResponse();
     }

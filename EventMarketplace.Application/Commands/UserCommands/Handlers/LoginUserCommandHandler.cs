@@ -20,10 +20,10 @@ public class LoginUserCommandHandler(
     public async Task<JwtTokenResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var userFromDb = await unitOfWork.Users.GetUserByEmailAsync(request.Dto.Email) ??
-                         throw new AppException($"User with email: {request.Dto.Email}, was not found!");
+                         throw new EmNotFoundException($"User with email: {request.Dto.Email}, was not found!");
 
         if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
-            throw new AppException("Given password is wrong!");
+            throw new EmAppException("Given password is wrong!","INVALID_PASSWORD");
 
         var jwtToken = jwtProvider.GenerateToken(userFromDb);
         var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);

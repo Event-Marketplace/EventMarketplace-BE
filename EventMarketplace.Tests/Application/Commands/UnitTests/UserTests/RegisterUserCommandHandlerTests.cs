@@ -93,7 +93,7 @@ public class RegisterUserCommandHandlerTests
         Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
 
         //asserts
-        await Assert.ThrowsAsync<AppException>(action);
+        await Assert.ThrowsAsync<EmAppException>(action);
         _unitOfWork.Verify(m => m.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         _unitOfWork.Verify(m => m.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
     }

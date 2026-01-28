@@ -42,7 +42,7 @@ public class BlobStorageService(BlobServiceClient serviceClient) : IBlobStorageS
     {
         var container = serviceClient.GetBlobContainerClient(containerName);
         if (!await container.ExistsAsync()) 
-            throw new AppException("Brak kontenera o takiej nazwie na Azure");
+            throw new EmAppException("Brak kontenera o takiej nazwie na Azure","NO_CONTAINER_NAME_IN_AZURE");
         
         var blobClient = container.GetBlobClient(name);
         await blobClient.DeleteIfExistsAsync();

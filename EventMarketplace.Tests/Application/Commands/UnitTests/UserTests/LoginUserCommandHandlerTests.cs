@@ -62,7 +62,7 @@ public class LoginUserCommandHandlerTests
         Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
         
         //asserts
-        await Assert.ThrowsAsync<AppException>(action);
+        await Assert.ThrowsAsync<EmAppException>(action);
         _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
         _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -85,7 +85,7 @@ public class LoginUserCommandHandlerTests
         
         Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
 
-        await Assert.ThrowsAsync<AppException>(action);
+        await Assert.ThrowsAsync<EmAppException>(action);
         _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
         _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
         _passwordManager.Verify(x => x.ValidPassword(command.Dto.Password, _user.Password), Times.Once);

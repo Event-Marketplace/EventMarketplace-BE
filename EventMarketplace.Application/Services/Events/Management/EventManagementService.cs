@@ -27,7 +27,7 @@ public class EventManagementService(
 
         var imageUrl = await eventFileUploader.UploadEventImageAsync(request.Image, cancellationToken);
         if (string.IsNullOrEmpty(imageUrl))
-            throw new AppException("Upload filed (Azure Blob Storage), Image url is empty!");
+            throw new EmAppException("Upload filed (Azure Blob Storage), Image url is empty!","NO_IMAGE_URL");
         
         var (address, descriptionPlace) = EventAddressMapper.MapLocationToEntity(request);
         
@@ -48,9 +48,9 @@ public class EventManagementService(
         try
         {
             var eventToDelete = await unitOfWork.Events.GetEventByIdAsync(eventId) 
-                                ?? throw new AppException("Brak wydarzenia o podanym id w bazie danych.");
+                                ?? throw new EmNotFoundException("Brak wydarzenia o podanym id w bazie danych.");
 
-            if (eventToDelete.EventStatus == EventStatus.Approved) throw new AppException("Nie można usunąć zatwierdzonego wydarzenia.");
+            if (eventToDelete.EventStatus == EventStatus.Approved) throw new EmConflictException("Nie można usunąć zatwierdzonego wydarzenia.","EVENT_WRONG_STATUS_TO_DELETE");
             await eventFileUploader.DeleteEventImageAsync(eventToDelete.ImageUrl);
             eventToDelete.IsDeleted = true;
             await unitOfWork.CommitAsync(cancellationToken);
@@ -66,7 +66,7 @@ public class EventManagementService(
     public async Task EditEvent(EditEventRequest request, CancellationToken cancellationToken)
     {
         var eventToUdpate = await unitOfWork.Events.GetEventByIdAsync(request.Id) 
-                            ?? throw new AppException("Brak danego wydarzenia w bazie danych.");
+                            ?? throw new EmNotFoundException("Brak danego wydarzenia w bazie danych.");
 
         mapper.Map(request, eventToUdpate);
         
@@ -85,20 +85,20 @@ public class EventManagementService(
 
     public async Task<EventCommentResponse> AddEventComment(AddEventCommentRequest request)
     {
-        if (string.IsNullOrEmpty(request.Comment)) throw new AppException("Content is required.");
+        if (string.IsNullOrEmpty(request.Comment)) throw new EmAppException("Comment is required.","REQUIRED_COMMENT");
         if (!await unitOfWork.Events.CheckIsEventExist(request.EventId))
-            throw new AppException($"Event with id = {request.EventId} not found!");
+            throw new EmNotFoundException($"Event with id = {request.EventId} not found!");
 
         var currentUserId = userService.GetUserIdFromContext();
         var currentUserName = await userService.GetCurrentUserFullName(currentUserId);
         
         if (!userService.IsInRole(RoleType.Admin) && !userService.IsInRole(RoleType.Organizer))
-            throw new AppException("No permissions.");
+            throw new EmForbiddenException("No permissions.");
 
         if (request.CurrentContext.Equals(RoleType.Organizer.ToString()))
         {
             if (!await userService.CanUserAccessEvent(request.EventId, currentUserId))
-                throw new AppException("User has not access to this event");
+                throw new EmForbiddenException("User has not access to this event");
         }
 
         var newComment = EventComment.Create(request.EventId, currentUserId, request.Comment);

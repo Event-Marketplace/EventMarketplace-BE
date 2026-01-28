@@ -20,7 +20,7 @@ public class GetOrganizerEventsQueryHandler(EventMarketplaceDbContext context, I
         var loggedOrganizerId = contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var organizer = await context.Users
             .SingleOrDefaultAsync(x => x.Id == Guid.Parse(loggedOrganizerId), cancellationToken: cancellationToken) 
-            ?? throw new AppException($"No organizer with this ID - {loggedOrganizerId}");
+            ?? throw new EmNotFoundException($"No organizer with this ID - {loggedOrganizerId}");
 
         var organizerEvents = context.Events
             .Include(x => x.Organizer)

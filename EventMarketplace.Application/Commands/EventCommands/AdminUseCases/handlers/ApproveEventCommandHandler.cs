@@ -11,9 +11,9 @@ public class ApproveEventCommandHandler(IUnitOfWork unitOfWork, ILogger<ApproveE
     public async Task Handle(ApproveEventCommand request, CancellationToken cancellationToken)
     {
         var eventToApprove = await unitOfWork.Events.GetEventByIdAsync(request.EventId) ??
-                             throw new AppException("Event not found.");
+                             throw new EmNotFoundException("Event not found.");
 
-        if(eventToApprove.EventStatus == EventStatus.Approved) throw new AppException("Event already approved!");
+        if(eventToApprove.EventStatus == EventStatus.Approved) throw new EmConflictException("Event already approved!","EVENT_ALREADY_APPROVED");
         eventToApprove.ApproveEvent();
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

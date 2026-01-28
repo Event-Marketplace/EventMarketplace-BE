@@ -16,12 +16,12 @@ public class RejectEventCommandHandler(
     public async Task Handle(RejectEventCommand request, CancellationToken cancellationToken)
     {
         var eventToApprove = await unitOfWork.Events.GetEventByIdAsync(request.EventId) ??
-                             throw new AppException("Event not found.");
+                             throw new EmNotFoundException("Event not found.");
         
         var currentUserId = userService.GetUserIdFromContext();
-        if (!userService.IsInRole(RoleType.Admin)) throw new AppException("User has not specified role.");
+        if (!userService.IsInRole(RoleType.Admin)) throw new EmForbiddenException("User has not specified role.");
         
-        if(eventToApprove.EventStatus == EventStatus.Rejected) throw new AppException("Event already rejected!");
+        if(eventToApprove.EventStatus == EventStatus.Rejected) throw new EmConflictException("Event already rejected!", "EVENT_ALREADY_REJECTED");
         eventToApprove.RejectEvent(request.RejectionReason);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
