@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
+using EventMarketplace.Application.Services.Admin.Stats;
 using EventMarketplace.Application.UseCases.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
@@ -85,6 +86,7 @@ public static class Extensions
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddScoped<IEventManagementService, EventManagementService>();
         services.AddScoped<EventFileUploader>();
+        services.AddScoped<IAdminStatsService, AdminStatsService>();
         
         //ustawienie limitera
         services.AddRateLimiter(opt =>
