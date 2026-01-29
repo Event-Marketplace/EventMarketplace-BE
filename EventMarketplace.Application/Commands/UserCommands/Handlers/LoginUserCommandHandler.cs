@@ -23,7 +23,7 @@ public class LoginUserCommandHandler(
                          throw new EmNotFoundException($"User with email: {request.Dto.Email}, was not found!");
 
         if (!passwordManager.ValidPassword(request.Dto.Password, userFromDb.Password))
-            throw new EmAppException("Given password is wrong!","INVALID_PASSWORD");
+            throw new EmException("Given password is wrong!","INVALID_PASSWORD");
 
         var jwtToken = jwtProvider.GenerateToken(userFromDb);
         var refreshToken = jwtProvider.GenerateRefreshToken(userFromDb);

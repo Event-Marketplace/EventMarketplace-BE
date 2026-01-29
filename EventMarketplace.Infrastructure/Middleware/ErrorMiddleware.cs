@@ -27,11 +27,11 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
         {
             await Handle(context, StatusCodes.Status403Forbidden, ex, "Forbidden exception");
         } 
-        catch (EmUnAuthorizeException ex)
+        catch (EmUnauthorizeException ex)
         {
             await Handle(context, StatusCodes.Status401Unauthorized, ex, "Authorization / Authentication exception");
         }
-        catch (EmAppException ex)
+        catch (EmException ex)
         {
             await Handle(context, StatusCodes.Status400BadRequest, ex, "Application error");
         }
@@ -67,7 +67,7 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
         await context.Response.WriteAsJsonAsync(response);
     }
     
-    private async Task Handle(HttpContext context, int statusCode, EmAppException ex, string logMessage)
+    private async Task Handle(HttpContext context, int statusCode, EmException ex, string logMessage)
     {
         logger.LogWarning(ex, "{LogMessage} | ErrorCode={ErrorCode}", logMessage, ex.ErrorCode);
         await CatchErrors(context, statusCode, ex.ErrorCode, ex.Message);

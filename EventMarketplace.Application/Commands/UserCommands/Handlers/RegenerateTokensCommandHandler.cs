@@ -13,9 +13,9 @@ public class RegenerateTokensCommandHandler(IUnitOfWork unitOfWork, IJwtProvider
     {
         var refreshToken = jwtProvider.GetRefreshTokenFromCookies();
         var refreshFromDb = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshToken) 
-                            ?? throw new EmAppException("No refresh token in database.","NO_REFRESH_TOKEN");
+                            ?? throw new EmException("No refresh token in database.","NO_REFRESH_TOKEN");
 
-        if (refreshFromDb.Expires < DateTime.UtcNow) throw new EmAppException("Refresh token revoked.","REFRESH_TOKEN_REVOKED");
+        if (refreshFromDb.Expires < DateTime.UtcNow) throw new EmException("Refresh token revoked.","REFRESH_TOKEN_REVOKED");
         
         var loggedUser = await unitOfWork.Users.GetUserByIdAsync(refreshFromDb.UserId) 
                          ?? throw new EmNotFoundException($"User with id: {refreshFromDb.UserId}, not found.");

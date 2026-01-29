@@ -27,7 +27,7 @@ public class EventManagementService(
 
         var imageUrl = await eventFileUploader.UploadEventImageAsync(request.Image, cancellationToken);
         if (string.IsNullOrEmpty(imageUrl))
-            throw new EmAppException("Upload filed (Azure Blob Storage), Image url is empty!","NO_IMAGE_URL");
+            throw new EmException("Upload filed (Azure Blob Storage), Image url is empty!","NO_IMAGE_URL");
         
         var (address, descriptionPlace) = EventAddressMapper.MapLocationToEntity(request);
         
@@ -85,7 +85,7 @@ public class EventManagementService(
 
     public async Task<EventCommentResponse> AddEventComment(AddEventCommentRequest request)
     {
-        if (string.IsNullOrEmpty(request.Comment)) throw new EmAppException("Comment is required.","REQUIRED_COMMENT");
+        if (string.IsNullOrEmpty(request.Comment)) throw new EmException("Comment is required.","REQUIRED_COMMENT");
         if (!await unitOfWork.Events.CheckIsEventExist(request.EventId))
             throw new EmNotFoundException($"Event with id = {request.EventId} not found!");
 

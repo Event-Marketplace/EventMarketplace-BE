@@ -20,7 +20,7 @@ public sealed class RegisterUserCommandHandler(
     public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         if (await unitOfWork.Users.CheckBusyEmail(request.Dto.Email))
-            throw new EmAppException("This email is already busy.","EMAIL_BUSY");
+            throw new EmException("This email is already busy.","EMAIL_BUSY");
         
         var memberRole = await unitOfWork.Roles.GetRoleByEnumAsync(RoleType.Participant) 
                          ?? throw new EmNotFoundException($"Role: {RoleType.Participant.GetDisplayName()} not found.");
@@ -28,7 +28,7 @@ public sealed class RegisterUserCommandHandler(
         newUser.AssignRole(memberRole);
 
         if (!request.Dto.Password.Equals(request.Dto.ConfirmPassword))
-            throw new EmAppException("Given passwords are not the same.","INVALID_PASSWORDS");
+            throw new EmException("Given passwords are not the same.","INVALID_PASSWORDS");
 
         newUser.SetPassword(passwordManager.HashPassword(request.Dto.Password));
         
