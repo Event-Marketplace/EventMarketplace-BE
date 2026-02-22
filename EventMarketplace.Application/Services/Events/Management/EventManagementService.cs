@@ -2,11 +2,13 @@ using AutoMapper;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
 using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response.EventResponse;
 using EventMarketplace.Application.Services.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Enums;
+using EventMarketplace.Infrastructure.Mapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -127,5 +129,13 @@ public class EventManagementService(
         
         eventComments.ForEach(x => x.SetReadComment());
         await unitOfWork.EventComments.UpdateEventCommentListAsync(eventComments); 
+    }
+
+    public async Task<EventResponse> GetEventById(GetEventQuery query, CancellationToken cancellationToken)
+    {
+        var @event = await unitOfWork.Events.GetEventByIdAsync(query.EventId) 
+                ?? throw new EmNotFoundException("Brak wydarzenia w bazie danych.");
+
+        return @event.MapToEventResponse();
     }
 }

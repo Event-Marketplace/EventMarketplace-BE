@@ -45,7 +45,7 @@ namespace EventMarketplace.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
         {
-            return Ok(await mediator.Send(new GetEventQuery(){EventId = id}));
+            return Ok(await eventManagementService.GetEventById(new GetEventQuery(){EventId = id}, CancellationToken.None));
         }
         
         [HttpGet("status-options")]

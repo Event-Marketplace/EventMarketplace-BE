@@ -6,6 +6,7 @@ using EventMarketplace.Application;
 using EventMarketplace.Application.Commands.EventCommands.AdminUseCases;
 using EventMarketplace.Application.Commands.EventCommands.AdminUseCases.handlers;
 using EventMarketplace.Application.Mapper;
+using EventMarketplace.Application.Queries.EventQueries;
 using EventMarketplace.Application.Utils.SignalR;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.DAL.QueryHandlers;
@@ -44,7 +45,7 @@ if (parentDirectory != null)
 builder.Services.AddMediatR(conf =>
 {
     conf.RegisterServicesFromAssembly(typeof(ApproveEventCommandHandler).Assembly);
-    conf.RegisterServicesFromAssembly(typeof(GetEventQueryHandler).Assembly);
+    conf.RegisterServicesFromAssembly(typeof(GetEventStatusesQueryHandler).Assembly);
 });
 
 builder.Services.AddApplication(builder.Configuration);
