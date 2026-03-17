@@ -39,14 +39,14 @@ jobs:
           path: ./publish
 
       - name: Log in to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/event-marketplace/eventmarketplace-be:dev -f EventMarketplace/Dockerfile .
+        run: docker build -t ghcr.io/event-marketplace/eventmarketplace-be:latest -f EventMarketplace/Dockerfile .
 
       - name: Push Docker image
-        run: docker push ghcr.io/event-marketplace/eventmarketplace-be:dev
+        run: docker push ghcr.io/event-marketplace/eventmarketplace-be:latest
