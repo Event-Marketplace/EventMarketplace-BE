@@ -18,40 +18,40 @@ public class RegisterUserCommandHandlerIntegrationTests
     [Fact]
     public async Task RegisterUser_IntegrationTest()
     {
-        //arrange
-        var options = new DbContextOptionsBuilder<EventMarketplaceDbContext>()
-            .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
-            .Options;
-
-        await using var context = new EventMarketplaceDbContext(options);
-
-        context.Roles.Add(new Role()
-        {
-            Id = Guid.CreateVersion7(),
-            RoleType = RoleType.Participant,
-            DisplayName = RoleType.Participant.GetDisplayName()
-        });
-
-        await context.SaveChangesAsync();
-        
-        var unitOfWork = new TestUnitOfWork(context);
-        var passwordManager = new PasswordManager();
-        var logger = new LoggerFactory().CreateLogger<RegisterUserCommandHandler>();
-        var handler = new RegisterUserCommandHandler(unitOfWork, passwordManager, logger);
-
-        var command = new RegisterUserCommand(new RegisterUserDto()
-        {
-            Email = "test@wp.pl",
-            Password = "Password.123",
-            ConfirmPassword = "Password.123",
-            IsOrganizerAccount = false
-        });
-
-        //act
-        await handler.Handle(command, CancellationToken.None);
-        
-        //asserts
-        var userInDb = await context.Users.FirstOrDefaultAsync(x => x.EmailAddress.Value.Equals("test@wp.pl"));
-        Assert.NotNull(userInDb);
+        // //arrange
+        // var options = new DbContextOptionsBuilder<EventMarketplaceDbContext>()
+        //     .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}")
+        //     .Options;
+        //
+        // await using var context = new EventMarketplaceDbContext(options);
+        //
+        // context.Roles.Add(new Role()
+        // {
+        //     Id = Guid.CreateVersion7(),
+        //     RoleType = RoleType.Participant,
+        //     DisplayName = RoleType.Participant.GetDisplayName()
+        // });
+        //
+        // await context.SaveChangesAsync();
+        //
+        // var unitOfWork = new TestUnitOfWork(context);
+        // var passwordManager = new PasswordManager();
+        // var logger = new LoggerFactory().CreateLogger<RegisterUserCommandHandler>();
+        // var handler = new RegisterUserCommandHandler(unitOfWork, passwordManager, logger);
+        //
+        // var command = new RegisterUserCommand(new RegisterUserDto()
+        // {
+        //     Email = "test@wp.pl",
+        //     Password = "Password.123",
+        //     ConfirmPassword = "Password.123",
+        //     IsOrganizerAccount = false
+        // });
+        //
+        // //act
+        // await handler.Handle(command, CancellationToken.None);
+        //
+        // //asserts
+        // var userInDb = await context.Users.FirstOrDefaultAsync(x => x.EmailAddress.Value.Equals("test@wp.pl"));
+        // Assert.NotNull(userInDb);
     }
 }

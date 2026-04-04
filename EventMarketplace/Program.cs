@@ -3,8 +3,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using DotNetEnv;
 using EventMarketplace.Application;
-using EventMarketplace.Application.Commands.EventCommands.Handlers;
+using EventMarketplace.Application.Commands.EventCommands.AdminUseCases;
+using EventMarketplace.Application.Commands.EventCommands.AdminUseCases.handlers;
 using EventMarketplace.Application.Mapper;
+using EventMarketplace.Application.Queries.EventQueries;
 using EventMarketplace.Application.Utils.SignalR;
 using EventMarketplace.Infrastructure;
 using EventMarketplace.Infrastructure.DAL.QueryHandlers;
@@ -42,8 +44,8 @@ if (parentDirectory != null)
 
 builder.Services.AddMediatR(conf =>
 {
-    conf.RegisterServicesFromAssembly(typeof(CreateEventCommandHandler).Assembly);
-    conf.RegisterServicesFromAssembly(typeof(GetEventQueryHandler).Assembly);
+    conf.RegisterServicesFromAssembly(typeof(ApproveEventCommandHandler).Assembly);
+    conf.RegisterServicesFromAssembly(typeof(GetEventStatusesQueryHandler).Assembly);
 });
 
 builder.Services.AddApplication(builder.Configuration);

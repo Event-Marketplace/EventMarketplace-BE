@@ -14,42 +14,72 @@ public class ErrorMiddleware(RequestDelegate next, ILogger<ErrorMiddleware> logg
         {
             await next(context);
         }
-        catch (AppException ex)
+        catch (EmConflictException ex)
         {
-            logger.LogWarning($"Błąd biznesowy: {ex.Message}");
-            
-            context.Response.StatusCode = ex.StatusCode;
-            context.Response.ContentType = "application/json";
-            
-            var response = new { error = ex.Message };
-            var json = JsonSerializer.Serialize(response);
-            await context.Response.WriteAsync(json);
+            logger.LogWarning(ex, "Conflict state exception");
+            await CatchErrors(context, StatusCodes.Status409Conflict, ex.ErrorCode, ex.Message);
+        }
+        catch (EmNotFoundException ex)
+        {
+            await Handle(context, StatusCodes.Status404NotFound, ex, "Not found exception");
+        }
+        catch (EmForbiddenException ex)
+        {
+            await Handle(context, StatusCodes.Status403Forbidden, ex, "Forbidden exception");
+        } 
+        catch (EmUnauthorizeException ex)
+        {
+            await Handle(context, StatusCodes.Status401Unauthorized, ex, "Authorization / Authentication exception");
+        }
+        catch (EmException ex)
+        {
+            await Handle(context, StatusCodes.Status400BadRequest, ex, "Application error");
         }
         catch (FluentValidation.ValidationException ex)
         {
-            logger.LogWarning($"Błędy walidacji: {string.Join(", ", ex.Errors.Select(e => e.ErrorMessage))}");
-    
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            context.Response.ContentType = "application/json";
-
-            var response = new
-            {
-                errors = ex.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
-            };
-    
-            var json = JsonSerializer.Serialize(response);
-            await context.Response.WriteAsync(json);
+            await HandleValidationException(context, ex);
         }
         catch (Exception ex)
         {
-            logger.LogWarning($"Nieoczekiwany bład serwera - {ex.Message}");
-            
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "application/json";
-            
-            var response = new { error = $"Wystąpił nieoczekiwany błąd serwera - {ex.Message}" };
-            var json = JsonSerializer.Serialize(response);
-            await context.Response.WriteAsync(json);
-        }
+            logger.LogError(ex, "Nieobsłużony wyjątek");
+            await CatchErrors(context, StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "Unexpected server error");}
+    }
+    
+    private async Task HandleValidationException(
+        HttpContext context,
+        FluentValidation.ValidationException ex)
+    {
+        logger.LogWarning(ex, "Błędy walidacji");
+
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        context.Response.ContentType = "application/json";
+
+        var response = new
+        {
+            errorCode = "VALIDATION_ERROR",
+            errors = ex.Errors.Select(e => new
+            {
+                field = e.PropertyName,
+                message = e.ErrorMessage
+            })
+        };
+
+        await context.Response.WriteAsJsonAsync(response);
+    }
+    
+    private async Task Handle(HttpContext context, int statusCode, EmException ex, string logMessage)
+    {
+        logger.LogWarning(ex, "{LogMessage} | ErrorCode={ErrorCode}", logMessage, ex.ErrorCode);
+        await CatchErrors(context, statusCode, ex.ErrorCode, ex.Message);
+    }
+
+
+    private async Task CatchErrors(HttpContext httpContext, int statusCode, string errorCode, string message)
+    {
+        httpContext.Response.StatusCode = statusCode;
+        httpContext.Response.ContentType = "application/json";
+
+        var response = new { errorCode, message };
+        await httpContext.Response.WriteAsJsonAsync(response);
     }
 }

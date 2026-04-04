@@ -28,7 +28,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 7, 12, 16, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 7, 14, 23, 59, 0, DateTimeKind.Utc)),
-                    Price = 349.99,
+                    Price = 349.99m,
                     AvailableTickets = 1200,
                     ImageUrl = "https://example.com/images/soundwave2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -42,7 +42,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 5, 18, 8, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 5, 18, 14, 0, 0, DateTimeKind.Utc)),
-                    Price = 150.00,
+                    Price = 150.00m,
                     AvailableTickets = 5000,
                     ImageUrl = "https://example.com/images/krakow-marathon.jpg",
                     EventStatus = EventStatus.Draft,
@@ -56,7 +56,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 9, 5, 10, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 9, 7, 18, 0, 0, DateTimeKind.Utc)),
-                    Price = 59.99,
+                    Price = 59.99m,
                     AvailableTickets = 3000,
                     ImageUrl = "https://example.com/images/planszowkon2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -70,7 +70,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 4, 10, 9, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 4, 11, 17, 0, 0, DateTimeKind.Utc)),
-                    Price = 499.00,
+                    Price = 499.00m,
                     AvailableTickets = 800,
                     ImageUrl = "https://example.com/images/futuretech2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -84,7 +84,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 8, 2, 10, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 8, 2, 22, 0, 0, DateTimeKind.Utc)),
-                    Price = 40.00,
+                    Price = 40.00m,
                     AvailableTickets = 1500,
                     ImageUrl = "https://example.com/images/classicdrive2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -98,7 +98,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 3, 22, 19, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 3, 22, 22, 0, 0, DateTimeKind.Utc)),
-                    Price = 89.00,
+                    Price = 89.00m,
                     AvailableTickets = 400,
                     ImageUrl = "https://example.com/images/standup2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -112,7 +112,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 6, 6, 10, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 6, 8, 18, 0, 0, DateTimeKind.Utc)),
-                    Price = 120.00,
+                    Price = 120.00m,
                     AvailableTickets = 1000,
                     ImageUrl = "https://example.com/images/formart2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -126,7 +126,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 11, 15, 12, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 11, 17, 20, 0, 0, DateTimeKind.Utc)),
-                    Price = 99.99,
+                    Price = 99.99m,
                     AvailableTickets = 2500,
                     ImageUrl = "https://example.com/images/league-masters.jpg",
                     EventStatus = EventStatus.Draft,
@@ -140,7 +140,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 12, 5, 19, 30, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 12, 5, 22, 30, 0, DateTimeKind.Utc)),
-                    Price = 180.00,
+                    Price = 180.00m,
                     AvailableTickets = 700,
                     ImageUrl = "https://example.com/images/chopin2025.jpg",
                     EventStatus = EventStatus.Draft,
@@ -154,7 +154,7 @@ public class EventMarketplaceInitializer(IServiceProvider serviceProvider) : IHo
                     DurationOfTheEvent = DurationOfTheEvent.Create(
                         new DateTime(2025, 5, 25, 11, 0, 0, DateTimeKind.Utc), 
                         new DateTime(2025, 5, 25, 16, 0, 0, DateTimeKind.Utc)),
-                    Price = 220.00,
+                    Price = 220.00m,
                     AvailableTickets = 50,
                     ImageUrl = "https://example.com/images/masterchef2025.jpg",
                     EventStatus = EventStatus.Draft,

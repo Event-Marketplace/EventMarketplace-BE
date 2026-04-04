@@ -19,6 +19,13 @@ public class UserPostgresRepository(EventMarketplaceDbContext context) : IUserRe
     public async Task<User> GetUserByIdAsync(Guid userId)
         => await context.Users.SingleOrDefaultAsync(x => x.Id == userId);
 
+    public async Task<string> GetUserFullNameByIdAsync(Guid userId)
+    {
+        var user = await context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        return user.FullName.ToString();
+    }
+     
+
     public async Task<bool> CheckBusyEmail(string emailAddress)
     {
         var isBusy = await context.Users.FirstOrDefaultAsync(x => x.EmailAddress.Value.Equals(emailAddress));

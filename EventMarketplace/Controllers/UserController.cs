@@ -1,5 +1,6 @@
 
 using EventMarketplace.Application.Commands.UserCommands;
+using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Queries;
 using EventMarketplace.Application.Response;
 using EventMarketplace.Application.Response.UserResponse;
@@ -16,9 +17,6 @@ namespace EventMarketplace.Controllers
         IMediator mediator
         ) : ControllerBase
     {
-
-       
-        
         [HttpGet("user-info")]
         public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
         {

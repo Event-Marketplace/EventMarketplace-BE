@@ -11,32 +11,22 @@ public class RegenerateTokensCommandHandler(IUnitOfWork unitOfWork, IJwtProvider
 {
     public async Task<JwtTokenResponse> Handle(RegenerateTokensCommand request, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
+        var refreshToken = jwtProvider.GetRefreshTokenFromCookies();
+        var refreshFromDb = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshToken) 
+                            ?? throw new EmException("No refresh token in database.","NO_REFRESH_TOKEN");
+
+        if (refreshFromDb.Expires < DateTime.UtcNow) throw new EmException("Refresh token revoked.","REFRESH_TOKEN_REVOKED");
         
-        try
-        {
-            var refreshToken = jwtProvider.GetRefreshTokenFromCookies();
-            var refreshFromDb = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshToken) 
-                                ?? throw new AppException("Brak refresh token'a w bazie danych.");
+        var loggedUser = await unitOfWork.Users.GetUserByIdAsync(refreshFromDb.UserId) 
+                         ?? throw new EmNotFoundException($"User with id: {refreshFromDb.UserId}, not found.");
+        
+        var jwtToken = jwtProvider.GenerateToken(loggedUser);
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (refreshFromDb.Expires < DateTime.UtcNow) throw new Exception("Refresh token wygasł.");
-            
-            var loggedUser = await unitOfWork.Users.GetUserByIdAsync(refreshFromDb.UserId) 
-                             ?? throw new AppException("Brak zalogowanego użytkownika w bazie danych.");
-            
-            var jwtToken = jwtProvider.GenerateToken(loggedUser);
-            
-            await unitOfWork.CommitAsync(cancellationToken);
-
-            return new JwtTokenResponse()
-            {
-                TokenJwt = jwtToken
-            };
-        }
-        catch (Exception e)
+        return new JwtTokenResponse()
         {
-            await unitOfWork.RollbackAsync(cancellationToken);
-            throw;
-        }
+            TokenJwt = jwtToken
+        };
     }
 }

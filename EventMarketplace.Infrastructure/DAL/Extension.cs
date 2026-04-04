@@ -1,6 +1,9 @@
 
 using System.Data;
+using EventMarketplace.Application.Queries;
+using EventMarketplace.Application.Queries.AdminQueries;
 using EventMarketplace.Domain.Repositories;
+using EventMarketplace.Infrastructure.DAL.QueryHandlers;
 using EventMarketplace.Infrastructure.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +39,8 @@ public static class Extension
         //rejestracja idbconnection dla dappera
         services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
         services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IEventReadModel, EventReadModel>();
+        services.AddScoped<IAdminEventReadModel, AdminEventReadModel>();
         
         // services.AddHostedService<EventMarketplaceInitializer>();
         

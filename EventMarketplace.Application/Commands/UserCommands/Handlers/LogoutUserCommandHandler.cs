@@ -8,25 +8,15 @@ public class LogoutUserCommandHandler(IUnitOfWork unitOfWork, IJwtProvider jwtPr
 {
     public async Task Handle(LogoutUserCommand request, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
-        
-        try
-        {
-            var refreshTokenFromCookies = jwtProvider.GetRefreshTokenFromCookies();
-            var refreshTokenEntity = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshTokenFromCookies) 
-                                     ?? throw new Exception("Brak refresh token'a w bazie danych.");
+        var refreshTokenFromCookies = jwtProvider.GetRefreshTokenFromCookies();
+        var refreshTokenEntity = await unitOfWork.Auths.GetEntityByRefreshTokenValue(refreshTokenFromCookies) 
+                                 ?? throw new Exception("No refresh token in database!");
 
-            refreshTokenEntity.SetRevokedToken();
-            
-            jwtProvider.SetNullRefreshTokenInCookies();
-            await unitOfWork.Auths.UpdateRefreshTokenEntity(refreshTokenEntity);
-            
-            await unitOfWork.CommitAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            await unitOfWork.RollbackAsync(cancellationToken);
-            throw;
-        }
+        refreshTokenEntity.SetRevokedToken();
+        
+        jwtProvider.SetNullRefreshTokenInCookies();
+        await unitOfWork.Auths.UpdateRefreshTokenEntity(refreshTokenEntity);
+        
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

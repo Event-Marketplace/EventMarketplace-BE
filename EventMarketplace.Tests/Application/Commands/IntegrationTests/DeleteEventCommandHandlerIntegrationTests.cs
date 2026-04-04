@@ -1,4 +1,4 @@
-using EventMarketplace.Application.Commands.EventCommands.DeleteEvent;
+
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.ValueObjects;

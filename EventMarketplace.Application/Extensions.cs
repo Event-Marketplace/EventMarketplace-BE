@@ -3,7 +3,8 @@ using System.Threading.RateLimiting;
 using Azure.Storage.Blobs;
 using EventMarketplace.Application.Behaviors;
 using EventMarketplace.Application.Commands.EventCommands.CreateEvent;
-using EventMarketplace.Application.Commands.EventCommands.Handlers;
+using EventMarketplace.Application.Services.Admin.Stats;
+using EventMarketplace.Application.UseCases.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Application.Utils.Jwt;
@@ -22,7 +23,6 @@ public static class Extensions
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPasswordManager, PasswordManager>();
-        services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddHttpContextAccessor();
         
         #region JwtConfiguration
@@ -70,8 +70,7 @@ public static class Extensions
             });
 
         #endregion
-
-        services.AddScoped<IBlobStorageService, BlobStorageService>();
+        
         services.AddScoped<IUserService, UserService>();
         
         var protocol = Environment.GetEnvironmentVariable("DEFAULT_PROTOCOL");
@@ -82,9 +81,12 @@ public static class Extensions
         var azureBlobConnString = $"DefaultEndpointsProtocol={protocol};AccountName={accountName};AccountKey={accountKey};EndpointSuffix={endpointSuffix}";
         services.AddSingleton(new BlobServiceClient(azureBlobConnString));
 
-        services.AddValidatorsFromAssemblyContaining<CreateEventCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateEventValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+        services.AddScoped<IEventManagementService, EventManagementService>();
+        services.AddScoped<EventFileUploader>();
+        services.AddScoped<IAdminStatsService, AdminStatsService>();
         
         //ustawienie limitera
         services.AddRateLimiter(opt =>

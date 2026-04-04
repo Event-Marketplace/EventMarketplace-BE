@@ -1,36 +1,21 @@
-using EventMarketplace.Application.Commands.EventCommands;
-using EventMarketplace.Application.Commands.EventCommands.AdminFunctions;
-using EventMarketplace.Application.Response.EventResponse;
-using EventMarketplace.Domain.Entities;
-using EventMarketplace.Domain.Repositories;
-using MediatR;
+using EventMarketplace.Application.Services.Events.CreateEvent;
+using EventMarketplace.Application.UseCases.Events.CreateEvent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace EventMarketplace.Application.Utils.SignalR;
 
 [Authorize(Roles = "Admin,Organizer")]
-public class EventHub(IMediator mediator, IUserService userService, IEventCommentRepository eventCommentRepository) : Hub
+public class EventHub(
+    IEventManagementService eventManagementService) : Hub
 {
     public async Task AddComment(Guid eventId, string comment, string currentContext)
     {
-        var lastCommentId = await mediator.Send<Guid>(new AddEventCommentCommand(eventId, comment, currentContext));
-
-        var currentUserId = userService.GetUserIdFromContext();
-        var latestComment = await eventCommentRepository.GetEventCommentByIdAsync(lastCommentId);
+        var request = new AddEventCommentRequest()
+            { EventId = eventId, Comment = comment, CurrentContext = currentContext };
+        var lastComment = await eventManagementService.AddEventComment(request);
         
-        var newComment = new EventCommentResponse()
-        {
-            Id = latestComment.Id,
-            Content = latestComment.Content,
-            User = latestComment.User.FullName.ToString(),
-            CreatedAt = latestComment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy hh:ss"),
-            EventId = latestComment.EventId,
-            UserId = latestComment.UserId,
-            WasRead = true
-        };
-        
-        await Clients.Group($"Event_{eventId}").SendAsync("ReceiveComment", eventId, newComment);
+        await Clients.Group($"Event_{eventId}").SendAsync("ReceiveComment", eventId, lastComment);
     }
 
     
@@ -46,7 +31,7 @@ public class EventHub(IMediator mediator, IUserService userService, IEventCommen
 
     public async Task ReadComments(Guid eventId)
     {
-        await mediator.Send(new ReadCommentCommand(eventId));
+        await eventManagementService.ReadEventComments(eventId);
         await Clients.Group($"Event_{eventId}").SendAsync("CommentsRead", eventId);
     }
 }
