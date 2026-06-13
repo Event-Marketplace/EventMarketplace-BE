@@ -21,6 +21,8 @@ public class RegenerateTokensCommandHandler(IUnitOfWork unitOfWork, IJwtProvider
                          ?? throw new EmNotFoundException($"User with id: {refreshFromDb.UserId}, not found.");
         
         var jwtToken = jwtProvider.GenerateToken(loggedUser);
+        //ustawienie refresh tokenu na nieaktualny i utworzenie nowego i ustawienie w cookies jako HttpOnly
+        //(w sumie opcjonalne ale do zastanowienia sie czy to będzie wydajne, może nie warto?)
         
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

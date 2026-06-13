@@ -23,4 +23,5 @@ public class EventResponse
     public string? DescriptionEventPlace { get; set; }
     public List<EventCommentResponse> Comments { get; set; } = [];
     public bool WasRead { get; set; }
+    public string? RejectionReason { get; set; }
 }

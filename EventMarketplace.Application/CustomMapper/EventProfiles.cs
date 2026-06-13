@@ -4,7 +4,7 @@ using EventMarketplace.Domain.Enums;
 
 namespace EventMarketplace.Infrastructure.Mapper;
 
-public static class Mapper
+public static class EventProfiles
 {
     public static EventResponse MapToEventResponse(this Event @event)
     {
@@ -22,6 +22,7 @@ public static class Mapper
             UpdatedAt = @event.UpdatedAt,
             Status = @event.EventStatus,
             StatusDisplayName = @event.EventStatus.GetDisplayName(),
+            RejectionReason = @event.RejectionReason
         };
     }
 }
