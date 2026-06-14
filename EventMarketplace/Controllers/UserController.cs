@@ -22,6 +22,12 @@ namespace EventMarketplace.Controllers
         {
             return Ok(await mediator.Send(query));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers([FromQuery] GetUsersQuery query)
+        {
+            return Ok(await mediator.Send(query));
+        }
         
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command)

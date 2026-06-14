@@ -41,6 +41,7 @@ public static class Extension
         services.AddScoped<IAdminRepository, AdminRepository>();
         services.AddScoped<IEventReadModel, EventReadModel>();
         services.AddScoped<IAdminEventReadModel, AdminEventReadModel>();
+        services.AddScoped<IUserReadModel, UserReadModel>();
         
         // services.AddHostedService<EventMarketplaceInitializer>();
         
