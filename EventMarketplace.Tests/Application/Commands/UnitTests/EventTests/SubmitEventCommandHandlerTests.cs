@@ -12,70 +12,51 @@ namespace EventMarketplace.Tests.Application.Commands.UnitTests.EventTests;
 
 public class SubmitEventCommandHandlerTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly Mock<ILogger<SubmitEventCommandHandler>> _logger;
-    private readonly Mock<IEventRepository> _eventRepo;
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
+    private readonly Mock<IEventRepository> _events = new();
     private readonly SubmitEventCommandHandler _handler;
-    
-    // public SubmitEventCommandHandlerTests()
-    // {
-    //     _unitOfWork = new Mock<IUnitOfWork>();
-    //     _logger = new Mock<ILogger<SubmitEventCommandHandler>>();
-    //     _eventRepo = new Mock<IEventRepository>();
-    //     _handler = new SubmitEventCommandHandler(_unitOfWork.Object, _logger.Object);
-    //     
-    //     //results remote
-    //     _unitOfWork.Setup(x => x.Events).Returns(_eventRepo.Object);
-    // }
-    //
-    // [Fact]
-    // public async Task Success_SubmitEvent()
-    // {
-    //     //arrange
-    //     var newGuid = Guid.CreateVersion7();
-    //     var command = new SubmitEventCommand(newGuid);
-    //     var eventToUdpate = new Event()
-    //     {
-    //         Id = new Guid(),
-    //         EventStatus = EventStatus.Draft
-    //     };
-    //
-    //     _unitOfWork.Setup(x => x.Events.GetEventByIdAsync(newGuid)).ReturnsAsync(eventToUdpate);
-    //
-    //     //act
-    //     await _handler.Handle(command, CancellationToken.None);
-    //
-    //     //asserts
-    //     Assert.Equal(EventStatus.Submitted, eventToUdpate.EventStatus);
-    //     _logger.Verify(
-    //         x => x.Log(
-    //             LogLevel.Information,
-    //             It.IsAny<EventId>(),
-    //             It.IsAny<It.IsAnyType>(),
-    //             It.IsAny<Exception>(),
-    //             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-    //         Times.Once);
-    // }
-    //
-    // [Fact]
-    // public async Task Handle_Throws_WhenEventAlreadySubmitted()
-    // {
-    //     //arrange
-    //     var newGuid = Guid.CreateVersion7();
-    //     var command = new SubmitEventCommand(newGuid);
-    //     var eventToUdpate = new Event()
-    //     {
-    //         Id = new Guid(),
-    //         EventStatus = EventStatus.Submitted
-    //     };
-    //
-    //     _unitOfWork.Setup(x => x.Events.GetEventByIdAsync(newGuid)).ReturnsAsync(eventToUdpate);
-    //
-    //     //act
-    //     var ex = await Assert.ThrowsAsync<EmException>(
-    //         () => _handler.Handle(command, CancellationToken.None));
-    //
-    //     //asserts
-    //     Assert.Contains("Wydarzenie posiada już status", ex.Message);
-    // }
+
+    public SubmitEventCommandHandlerTests()
+    {
+        _unitOfWork.SetupGet(x => x.Events).Returns(_events.Object);
+        _handler = new SubmitEventCommandHandler(
+            _unitOfWork.Object,
+            Mock.Of<ILogger<SubmitEventCommandHandler>>());
+    }
+
+    [Fact]
+    public async Task Handle_DraftEvent_ChangesStatusToSubmitted()
+    {
+        var eventId = Guid.NewGuid();
+        var eventEntity = new Event { Id = eventId, EventStatus = EventStatus.Draft };
+        _events.Setup(x => x.GetEventByIdAsync(eventId)).ReturnsAsync(eventEntity);
+
+        await _handler.Handle(new SubmitEventCommand(eventId), CancellationToken.None);
+
+        Assert.Equal(EventStatus.Submitted, eventEntity.EventStatus);
+        Assert.NotNull(eventEntity.UpdatedAt);
+    }
+
+    [Fact]
+    public async Task Handle_AlreadySubmittedEvent_ThrowsConflict()
+    {
+        var eventId = Guid.NewGuid();
+        var eventEntity = new Event { Id = eventId, EventStatus = EventStatus.Submitted };
+        _events.Setup(x => x.GetEventByIdAsync(eventId)).ReturnsAsync(eventEntity);
+
+        await Assert.ThrowsAsync<EmConflictException>(() =>
+            _handler.Handle(new SubmitEventCommand(eventId), CancellationToken.None));
+
+        Assert.Equal(EventStatus.Submitted, eventEntity.EventStatus);
+    }
+
+    [Fact]
+    public async Task Handle_EventDoesNotExist_ThrowsNotFound()
+    {
+        var eventId = Guid.NewGuid();
+        _events.Setup(x => x.GetEventByIdAsync(eventId)).ReturnsAsync((Event)null!);
+
+        await Assert.ThrowsAsync<EmNotFoundException>(() =>
+            _handler.Handle(new SubmitEventCommand(eventId), CancellationToken.None));
+    }
 }
