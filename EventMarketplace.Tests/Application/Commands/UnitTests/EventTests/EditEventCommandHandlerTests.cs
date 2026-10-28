@@ -50,9 +50,6 @@ public class EditEventServiceTests
             EndDateTime = end
         };
         _events.Setup(x => x.GetEventByIdAsync(eventEntity.Id)).ReturnsAsync(eventEntity);
-        _mapper.Setup(x => x.Map<Event>(request, eventEntity))
-            .Callback<object, Event>((_, target) => target.Title = "Updated title")
-            .Returns(eventEntity);
 
         await _service.EditEvent(request, CancellationToken.None);
 
@@ -71,7 +68,6 @@ public class EditEventServiceTests
         await Assert.ThrowsAsync<EmNotFoundException>(() =>
             _service.EditEvent(new EditEventRequest { Id = eventId }, CancellationToken.None));
 
-        _mapper.Verify(x => x.Map<Event>(It.IsAny<object>(), It.IsAny<Event>()), Times.Never);
         _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
