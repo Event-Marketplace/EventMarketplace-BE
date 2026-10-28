@@ -108,6 +108,24 @@ namespace EventMarketplace.Infrastructure.Migrations
                     b.ToTable("EventComments");
                 });
 
+            modelBuilder.Entity("EventMarketplace.Domain.Entities.EventRegistration", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ParticipantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("EventId", "ParticipantId");
+
+                    b.HasIndex("ParticipantId");
+
+                    b.ToTable("EventRegistrations");
+                });
+
             modelBuilder.Entity("EventMarketplace.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -285,6 +303,25 @@ namespace EventMarketplace.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("EventMarketplace.Domain.Entities.EventRegistration", b =>
+                {
+                    b.HasOne("EventMarketplace.Domain.Entities.Event", "Event")
+                        .WithMany("Registrations")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventMarketplace.Domain.Entities.User", "Participant")
+                        .WithMany("EventRegistrations")
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Participant");
+                });
+
             modelBuilder.Entity("EventMarketplace.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("EventMarketplace.Domain.Entities.User", "User")
@@ -418,6 +455,8 @@ namespace EventMarketplace.Infrastructure.Migrations
             modelBuilder.Entity("EventMarketplace.Domain.Entities.Event", b =>
                 {
                     b.Navigation("EventComments");
+
+                    b.Navigation("Registrations");
                 });
 
             modelBuilder.Entity("EventMarketplace.Domain.Entities.Role", b =>
@@ -428,6 +467,8 @@ namespace EventMarketplace.Infrastructure.Migrations
             modelBuilder.Entity("EventMarketplace.Domain.Entities.User", b =>
                 {
                     b.Navigation("EventComments");
+
+                    b.Navigation("EventRegistrations");
 
                     b.Navigation("Events");
 

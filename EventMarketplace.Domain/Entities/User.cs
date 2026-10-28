@@ -21,6 +21,7 @@ public class User : BaseEntity
     public ICollection<UserRole> UserRoles { get; set; } = [];
 
     public ICollection<EventComment> EventComments { get; set; } = [];
+    public ICollection<EventRegistration> EventRegistrations { get; set; } = [];
     
     public static User CreateUser(string email)
     {

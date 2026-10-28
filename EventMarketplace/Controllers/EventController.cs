@@ -66,6 +66,14 @@ namespace EventMarketplace.Controllers
             return Created();
         }
 
+        [Authorize(Roles = "Participant")]
+        [HttpPost("{id:guid}/registration")]
+        public async Task<IActionResult> RegisterForEvent([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            await eventManagementService.RegisterParticipantAsync(id, cancellationToken);
+            return NoContent();
+        }
+
         #endregion
        
         #region PUT

@@ -15,6 +15,7 @@ public interface IEventManagementService
     
     //Event comments
     Task<EventCommentResponse> AddEventComment(AddEventCommentRequest request);
+    Task RegisterParticipantAsync(Guid eventId, CancellationToken cancellationToken);
     Task ReadEventComments(Guid eventId);
 
     #endregion

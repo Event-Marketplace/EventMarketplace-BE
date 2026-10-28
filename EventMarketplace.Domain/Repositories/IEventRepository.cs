@@ -1,4 +1,5 @@
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 
 namespace EventMarketplace.Domain.Repositories;
 
@@ -11,4 +12,5 @@ public interface IEventRepository
     Task UpdateEventAsync(Event @event);
     Task<bool> CheckIsEventExist(Guid eventId);
     Task<bool> ExistsByIdAndOwner(Guid eventId, Guid ownerId);
+    Task<EventRegistrationResult> RegisterParticipantAsync(Guid eventId, Guid participantId, CancellationToken cancellationToken);
 }

@@ -21,6 +21,7 @@ public class Event : BaseEntity
     public string? RejectionReason { get; set; }
     public bool IsDeleted { get; set; } = false;
     public ICollection<EventComment> EventComments { get; set; } = new List<EventComment>();
+    public ICollection<EventRegistration> Registrations { get; set; } = new List<EventRegistration>();
     
     public static Event Create(string title, string description, decimal price, int availableTickets, 
         DateTime start, DateTime end, Guid organizerId, string imageUrl, Address? address, string? eventPlaceDescription, LocationType locationType)

@@ -131,6 +131,28 @@ public class EventManagementService(
         await unitOfWork.EventComments.UpdateEventCommentListAsync(eventComments); 
     }
 
+    public async Task RegisterParticipantAsync(Guid eventId, CancellationToken cancellationToken)
+    {
+        var participantId = userService.GetUserIdFromContext();
+        var result = await unitOfWork.Events.RegisterParticipantAsync(eventId, participantId, cancellationToken);
+
+        switch (result)
+        {
+            case EventRegistrationResult.Registered:
+                return;
+            case EventRegistrationResult.EventNotFound:
+                throw new EmNotFoundException("Nie znaleziono wydarzenia o podanym id.");
+            case EventRegistrationResult.EventUnavailable:
+                throw new EmConflictException("Zapisy na to wydarzenie nie są dostępne.", "EVENT_NOT_AVAILABLE_FOR_REGISTRATION");
+            case EventRegistrationResult.NoSeatsAvailable:
+                throw new EmConflictException("Brak wolnych miejsc na to wydarzenie.", "EVENT_NO_AVAILABLE_TICKETS");
+            case EventRegistrationResult.AlreadyRegistered:
+                throw new EmConflictException("Użytkownik jest już zapisany na to wydarzenie.", "USER_ALREADY_REGISTERED");
+            default:
+                throw new InvalidOperationException("Nieznany wynik rejestracji na wydarzenie.");
+        }
+    }
+
     public async Task<EventResponse> GetEventById(GetEventQuery query, CancellationToken cancellationToken)
     {
         var @event = await unitOfWork.Events.GetEventByIdAsync(query.EventId) 
