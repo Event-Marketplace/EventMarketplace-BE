@@ -8,123 +8,87 @@ using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Jwt;
 using EventMarketplace.Domain.Entities;
 using EventMarketplace.Domain.Repositories;
-using EventMarketplace.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace EventMarketplace.Tests.Application.Commands;
+namespace EventMarketplace.Tests.Application.Commands.UnitTests.UserTests;
 
 public class LoginUserCommandHandlerTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly Mock<IUserRepository> _userRepo;
-    private readonly Mock<IAuthRepository> _authRepo;
-    private readonly Mock<IPasswordManager> _passwordManager;
-    private readonly Mock<ILogger<LoginUserCommandHandler>> _logger;
-    private readonly Mock<IJwtProvider> _jwtProvider;
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
+    private readonly Mock<IUserRepository> _users = new();
+    private readonly Mock<IAuthRepository> _auth = new();
+    private readonly Mock<IPasswordManager> _passwords = new();
+    private readonly Mock<IJwtProvider> _jwt = new();
     private readonly LoginUserCommandHandler _handler;
-    private readonly User _user;
-    
+
     public LoginUserCommandHandlerTests()
     {
-        _unitOfWork = new Mock<IUnitOfWork>();
-        _userRepo = new Mock<IUserRepository>();
-        _authRepo = new Mock<IAuthRepository>();
-        _passwordManager = new Mock<IPasswordManager>();
-        _logger = new Mock<ILogger<LoginUserCommandHandler>>();
-        _jwtProvider = new Mock<IJwtProvider>();
-        
-        _handler = new LoginUserCommandHandler(_unitOfWork.Object, _passwordManager.Object, _logger.Object, _jwtProvider.Object);
-        _unitOfWork.Setup(x => x.Users).Returns(_userRepo.Object);
-        _unitOfWork.Setup(x => x.Auths).Returns(_authRepo.Object);
-        _unitOfWork.Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        _unitOfWork.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        _user = new User();
+        _unitOfWork.SetupGet(x => x.Users).Returns(_users.Object);
+        _unitOfWork.SetupGet(x => x.Auths).Returns(_auth.Object);
+        _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        _auth.Setup(x => x.AddNewRefreshTokenAsync(It.IsAny<RefreshToken>()))
+            .Returns(Task.CompletedTask);
+
+        _handler = new LoginUserCommandHandler(
+            _unitOfWork.Object,
+            _passwords.Object,
+            Mock.Of<ILogger<LoginUserCommandHandler>>(),
+            _jwt.Object);
     }
-    //
-    // #region NegativeTests
-    //
-    // [Fact]
-    // public async Task Should_Throw_Exception_When_Email_Not_Exist()
-    // {
-    //     //arrange
-    //     _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync((User?)null);
-    //     
-    //     var command = new LoginUserCommand(
-    //         new LoginUserDto()
-    //         {
-    //             Email = "b.longota2@wp.pl",
-    //             Password = "Password.122"
-    //         });
-    //     
-    //     //act
-    //     Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
-    //     
-    //     //asserts
-    //     await Assert.ThrowsAsync<EmException>(action);
-    //     _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-    //     _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
-    // }
-    //
-    // [Fact]
-    // public async Task Should_Throw_Exception_When_Password_Is_Wrong()
-    // {
-    //     _user.Password = "Password.122";
-    //     _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
-    //     
-    //     var command = new LoginUserCommand(
-    //         new LoginUserDto()
-    //         {
-    //             Email = "b.longota2@wp.pl",
-    //             Password = "Password.123"
-    //         });
-    //
-    //     _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
-    //         .Returns((string plain, string hashed) => plain == hashed);
-    //     
-    //     Func<Task> action = () => _handler.Handle(command, CancellationToken.None);
-    //
-    //     await Assert.ThrowsAsync<EmException>(action);
-    //     _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Never);
-    //     _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Once);
-    //     _passwordManager.Verify(x => x.ValidPassword(command.Dto.Password, _user.Password), Times.Once);
-    // }
-    //
-    // #endregion
-    //
-    // #region PositiveTests
-    //
-    // [Theory]
-    // [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuiop")]
-    // [InlineData("b.longota2@wp.pl", "Password.123", "qwertyuio")]
-    // public async Task Login_Successfully_When_Valid_Credentials(string email, string password, string token)
-    // {
-    //     //arrange
-    //     _user.Password = password;
-    //     _user.EmailAddress = EmailAddress.Create("b.longota2@wp.pl");
-    //     
-    //     _userRepo.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync(_user);
-    //     _passwordManager.Setup(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()))
-    //         .Returns((string p1, string p2) => p1 == p2);
-    //     _jwtProvider.Setup(x => x.GenerateToken(It.IsAny<User>())).Returns(token);
-    //     _jwtProvider.Setup(x => x.GenerateRefreshToken(It.IsAny<User>()))
-    //         .Returns(new RefreshTokenResponse(){RefreshToken = "asd", Expires = DateTime.UtcNow.AddDays(7)});
-    //     
-    //     var command = new LoginUserCommand(
-    //         new LoginUserDto()
-    //         {
-    //             Email = email,
-    //             Password = password
-    //         });
-    //     //act
-    //     var result = await  _handler.Handle(command, CancellationToken.None);
-    //     
-    //     //asserts
-    //     Assert.Equal(token, result.TokenJwt);
-    //     _unitOfWork.Verify(x => x.CommitAsync(CancellationToken.None), Times.Once);
-    //     _unitOfWork.Verify(x => x.RollbackAsync(CancellationToken.None), Times.Never);
-    // }
-    //
-    // #endregion
+
+    [Fact]
+    public async Task Handle_UnknownEmail_ThrowsNotFound()
+    {
+        _users.Setup(x => x.GetUserByEmailAsync("new.user@example.com")).ReturnsAsync((User)null!);
+
+        await Assert.ThrowsAsync<EmNotFoundException>(() => _handler.Handle(CreateCommand(), CancellationToken.None));
+
+        _passwords.Verify(x => x.ValidPassword(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WrongPassword_ThrowsAndDoesNotCreateTokens()
+    {
+        var user = User.CreateUser("new.user@example.com");
+        user.Password = "stored-hash";
+        _users.Setup(x => x.GetUserByEmailAsync("new.user@example.com")).ReturnsAsync(user);
+        _passwords.Setup(x => x.ValidPassword("Wrong.123", "stored-hash")).Returns(false);
+
+        await Assert.ThrowsAsync<EmException>(() => _handler.Handle(CreateCommand("Wrong.123"), CancellationToken.None));
+
+        _jwt.Verify(x => x.GenerateToken(It.IsAny<User>()), Times.Never);
+        _jwt.Verify(x => x.AppendRefreshToken(It.IsAny<string>()), Times.Never);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_ValidCredentials_ReturnsJwtAndStoresRefreshToken()
+    {
+        var user = User.CreateUser("new.user@example.com");
+        user.Password = "stored-hash";
+        var refreshToken = new RefreshTokenResponse
+        {
+            RefreshToken = "refresh-token-value",
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+        _users.Setup(x => x.GetUserByEmailAsync("new.user@example.com")).ReturnsAsync(user);
+        _passwords.Setup(x => x.ValidPassword("Password.123", "stored-hash")).Returns(true);
+        _jwt.Setup(x => x.GenerateToken(user)).Returns("access-token");
+        _jwt.Setup(x => x.GenerateRefreshToken(user)).Returns(refreshToken);
+
+        var result = await _handler.Handle(CreateCommand(), CancellationToken.None);
+
+        Assert.Equal("access-token", result.TokenJwt);
+        _jwt.Verify(x => x.AppendRefreshToken("refresh-token-value"), Times.Once);
+        _auth.Verify(x => x.AddNewRefreshTokenAsync(It.Is<RefreshToken>(token =>
+            token.UserId == user.Id && token.Expires == refreshToken.Expires && !token.Revoked)), Times.Once);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    private static LoginUserCommand CreateCommand(string password = "Password.123")
+        => new(new LoginUserDto { Email = "new.user@example.com", Password = password });
 }

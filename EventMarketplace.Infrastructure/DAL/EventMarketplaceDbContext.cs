@@ -11,6 +11,7 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
    public DbSet<Role> Roles { get; set; }
    public DbSet<UserRole> UserRoles { get; set; }
    public DbSet<EventComment> EventComments { get; set; }
+   public DbSet<EventRegistration> EventRegistrations { get; set; }
 
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
@@ -39,6 +40,11 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
       modelBuilder.Entity<EventComment>(entity =>
       {
          entity.HasKey(ec => ec.Id);
+      });
+
+      modelBuilder.Entity<EventRegistration>(entity =>
+      {
+         entity.HasKey(registration => new { registration.EventId, registration.ParticipantId });
       });
 
       #region RelationsConfig
@@ -73,6 +79,16 @@ public class EventMarketplaceDbContext(DbContextOptions<EventMarketplaceDbContex
          .WithMany(e => e.EventComments)
          .HasForeignKey(ec => ec.EventId)
          .OnDelete(DeleteBehavior.SetNull);
+
+      modelBuilder.Entity<EventRegistration>()
+         .HasOne(registration => registration.Event)
+         .WithMany(@event => @event.Registrations)
+         .HasForeignKey(registration => registration.EventId);
+
+      modelBuilder.Entity<EventRegistration>()
+         .HasOne(registration => registration.Participant)
+         .WithMany(user => user.EventRegistrations)
+         .HasForeignKey(registration => registration.ParticipantId);
 
       #endregion
 

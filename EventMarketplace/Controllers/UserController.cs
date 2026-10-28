@@ -17,11 +17,25 @@ namespace EventMarketplace.Controllers
         IMediator mediator
         ) : ControllerBase
     {
+        
+        #region GET
         [HttpGet("user-info")]
         public async Task<IActionResult> GetUserInfo([FromQuery] GetUserInfoQuery query)
         {
             return Ok(await mediator.Send(query));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers([FromQuery] GetUsersQuery query)
+        {
+            //zrobione pobranie wszsytkich użytkowników
+            //teraz trzeba pobrać tylko organizatorów / tylko uczestników / tylko adminów
+            //ewentualnie filtr z checkboxem do wyboru wielokrotnego!
+            return Ok(await mediator.Send(query));
+        }
+        
+        #endregion
+       
         
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserCommand command)

@@ -1,84 +1,91 @@
 using AutoMapper;
-//using EventMarketplace.Application.Commands.EventCommands.EditEvent;
-using EventMarketplace.Application.Dtos.EventDtos;
-using EventMarketplace.Application.Mapper;
+using EventMarketplace.Application.Exceptions;
 using EventMarketplace.Application.Patterns;
+using EventMarketplace.Application.Services.Events.CreateEvent;
+using EventMarketplace.Application.Utils;
 using EventMarketplace.Application.Utils.Azure;
 using EventMarketplace.Domain.Entities;
+using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Domain.ValueObjects;
-using EventMarketplace.Infrastructure.DAL.Repositories;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using EventManagementService = EventMarketplace.Application.UseCases.Events.CreateEvent.EventManagementService;
 
 namespace EventMarketplace.Tests.Application.Commands.UnitTests.EventTests;
 
-public class EditEventCommandHandlerTests
+public class EditEventServiceTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly Mock<IMapper> _mapper;
-    private readonly Mock<IBlobStorageService> _blob;
-    private readonly Mock<IEventRepository> _eventRepo;
-    //private readonly EditEventCommandHandler _handler;
-    
-    public EditEventCommandHandlerTests()
-    {
-        // _unitOfWork = new Mock<IUnitOfWork>();
-        // _mapper = new Mock<IMapper>();
-        // _blob = new Mock<IBlobStorageService>();
-        // _eventRepo = new Mock<IEventRepository>();
-        //
-        // var configuration = new MapperConfiguration(cfg =>
-        // {
-        //     cfg.AddProfile<EventProfile>();
-        // });
-        //
-        // var realMapper = configuration.CreateMapper();
-        //
-        // //_handler = new EditEventCommandHandler(_unitOfWork.Object, realMapper, _blob.Object);
-        //
-        // _unitOfWork.Setup(x => x.Events).Returns(_eventRepo.Object);
-        // _unitOfWork.Setup(x => x.BeginTransactionAsync(It.IsAny<CancellationToken>()))
-        //     .Returns(Task.CompletedTask);
-        // _unitOfWork.Setup(x => x.CommitAsync(It.IsAny<CancellationToken>()))
-        //     .Returns(Task.CompletedTask);
+    private readonly Mock<IUnitOfWork> _unitOfWork = new();
+    private readonly Mock<IEventRepository> _events = new();
+    private readonly Mock<IMapper> _mapper = new();
+    private readonly Mock<IBlobStorageService> _blobStorage = new();
+    private readonly EventManagementService _service;
 
+    public EditEventServiceTests()
+    {
+        _unitOfWork.SetupGet(x => x.Events).Returns(_events.Object);
+        _unitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        _service = new EventManagementService(
+            _unitOfWork.Object,
+            Mock.Of<ILogger<EventManagementService>>(),
+            Mock.Of<IUserService>(),
+            _mapper.Object,
+            new EventFileUploader(_blobStorage.Object));
     }
-    
+
     [Fact]
-    public async Task Success_When_Data_Is_Valid()
+    public async Task EditEvent_ExistingEvent_MapsChangesAndSaves()
     {
-        // var eventToUpdate = new Event()
-        // {
-        //     ImageUrl = "events/old.jpg",
-        //     DurationOfTheEvent = DurationOfTheEvent.Create(DateTime.UtcNow, DateTime.UtcNow.AddHours(1))
-        // };
-        //
-        // _unitOfWork.Setup(x => x.Events.GetEventByIdAsync(It.IsAny<Guid>())).ReturnsAsync(eventToUpdate);
-        //
-        // var file = new FormFile(Stream.Null, 0, 0, "file", "file.jpg");
-        // var dto = new EditEventDto()
-        // {
-        //     Title = "string",
-        //     Description = "description",
-        //     Price = 3.4,
-        //     Image = file,
-        //     AvailableTickets = 210,
-        //     StartDateTime = DateTime.UtcNow.AddDays(1),
-        //     EndDateTime = DateTime.UtcNow.AddDays(3),
-        // };
-        //
-        // _blob.Setup(x => x.UploadOrReplaceFileAsync(file, "file", "events", CancellationToken.None))
-        //     .ReturnsAsync("fake.jpg");
-        // _unitOfWork.Setup(x => x.Events.UpdateEventAsync(eventToUpdate)).Returns(Task.CompletedTask);
-        //
-        // var command = new EditEventCommand(dto);
-        //
-        // await _handler.Handle(command, CancellationToken.None);
-        //
-        // _unitOfWork.Verify(x => x.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
-        // _unitOfWork.Verify(x => x.RollbackAsync(It.IsAny<CancellationToken>()), Times.Never);
+        var eventEntity = CreateEvent();
+        var start = DateTime.UtcNow.AddDays(3);
+        var end = DateTime.UtcNow.AddDays(4);
+        var request = new EditEventRequest
+        {
+            Id = eventEntity.Id,
+            Title = "Updated title",
+            StartDateTime = start,
+            EndDateTime = end
+        };
+        _events.Setup(x => x.GetEventByIdAsync(eventEntity.Id)).ReturnsAsync(eventEntity);
+        _mapper.Setup(x => x.Map<Event>(request, eventEntity))
+            .Callback<object, Event>((_, target) => target.Title = "Updated title")
+            .Returns(eventEntity);
 
+        await _service.EditEvent(request, CancellationToken.None);
+
+        Assert.Equal("Updated title", eventEntity.Title);
+        Assert.Equal(start, eventEntity.DurationOfTheEvent.StartEvent);
+        Assert.Equal(end, eventEntity.DurationOfTheEvent.EndEvent);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task EditEvent_UnknownId_ThrowsNotFoundAndDoesNotSave()
+    {
+        var eventId = Guid.NewGuid();
+        _events.Setup(x => x.GetEventByIdAsync(eventId)).ReturnsAsync((Event)null!);
+
+        await Assert.ThrowsAsync<EmNotFoundException>(() =>
+            _service.EditEvent(new EditEventRequest { Id = eventId }, CancellationToken.None));
+
+        _mapper.Verify(x => x.Map<Event>(It.IsAny<object>(), It.IsAny<Event>()), Times.Never);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    private static Event CreateEvent()
+        => new()
+        {
+            Id = Guid.NewGuid(),
+            Title = "Original title",
+            Description = "Event used by a unit test",
+            DurationOfTheEvent = DurationOfTheEvent.Create(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2)),
+            Price = 25,
+            AvailableTickets = 50,
+            ImageUrl = "https://storage.example.com/events/poster.jpg",
+            EventStatus = EventStatus.Draft,
+            LocationType = LocationType.DescriptionPlace
+        };
 }
