@@ -16,9 +16,13 @@ public class UserReadModel(EventMarketplaceDbContext context, IMapper mapper) : 
         var stopwatch = new Stopwatch();
         
         stopwatch.Start();
-        var usersFiltered = await context
+        var filteredUsers = context
             .Users
             .FilterUsers(request)
+            .AsNoTracking();
+        var totalCount = await filteredUsers.CountAsync(cancellationToken);
+        var usersFiltered = await filteredUsers
+            .PaginateUsers(request)
             .ToListAsync(cancellationToken);
         
         stopwatch.Stop();
@@ -29,6 +33,7 @@ public class UserReadModel(EventMarketplaceDbContext context, IMapper mapper) : 
         return new GetUsersListResponse()
         {
             Users = usersMapped,
+            TotalCount = totalCount,
             ElapsedTime = elapsedTime
         };
     }

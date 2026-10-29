@@ -5,5 +5,6 @@ namespace EventMarketplace.Application.Responses.UserResponse;
 public class GetUsersListResponse
 {
     public List<GetUserInfoResponse> Users { get; set; }
+    public int TotalCount { get; set; }
     public long ElapsedTime { get; set; }
 }

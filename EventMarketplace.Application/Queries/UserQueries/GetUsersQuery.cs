@@ -6,6 +6,7 @@ namespace EventMarketplace.Application.Queries;
 
 public class GetUsersQuery : IRequest<GetUsersListResponse>
 {
+    public int PageNumber { get; set; } = 1;
     public string? FullName { get; set; }
     public List<Guid>? Roles { get; set; }
     public UserActivity? UserActivity { get; set; }
