@@ -1,4 +1,5 @@
 using EventMarketplace.Application.Queries;
+using EventMarketplace.Domain.Consts;
 using EventMarketplace.Domain.Entities;
 
 namespace EventMarketplace.Infrastructure.DAL.DbOperations;
@@ -10,8 +11,8 @@ public static class UserOperations
         if (!string.IsNullOrEmpty(query.FullName))
         {
             response = response.Where(x =>
-                x.FullName.FirstName.Contains(query.FullName, StringComparison.CurrentCultureIgnoreCase)
-                || x.FullName.LastName.Contains(query.FullName, StringComparison.CurrentCultureIgnoreCase));
+                x.FullName.FirstName.ToLower().Contains(query.FullName.ToLower())
+                || x.FullName.LastName.ToLower().Contains(query.FullName.ToLower()));
         }
 
         // if (query.Roles != null && query.Roles.Any())
@@ -32,5 +33,14 @@ public static class UserOperations
         }
         
         return response;
+    }
+
+    public static IQueryable<User> PaginateUsers(this IQueryable<User> response, GetUsersQuery query)
+    {
+        var pageNumber = Math.Max(query.PageNumber, 1);
+        return response
+            .OrderByDescending(user => user.CreatedAt)
+            .Skip((pageNumber - 1) * Variables.PAGE_SIZE)
+            .Take(Variables.PAGE_SIZE);
     }
 }
