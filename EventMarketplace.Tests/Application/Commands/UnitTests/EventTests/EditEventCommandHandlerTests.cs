@@ -1,5 +1,6 @@
 using AutoMapper;
 using EventMarketplace.Application.Exceptions;
+using EventMarketplace.Application.Mapper;
 using EventMarketplace.Application.Patterns;
 using EventMarketplace.Application.Services.Events.CreateEvent;
 using EventMarketplace.Application.Utils;
@@ -9,6 +10,7 @@ using EventMarketplace.Domain.Enums;
 using EventMarketplace.Domain.Repositories;
 using EventMarketplace.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 using EventManagementService = EventMarketplace.Application.UseCases.Events.CreateEvent.EventManagementService;
@@ -19,7 +21,9 @@ public class EditEventServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IEventRepository> _events = new();
-    private readonly Mock<IMapper> _mapper = new();
+    private readonly IMapper _mapper =
+        new MapperConfiguration(cfg => cfg.AddProfile<EventProfile>())
+        .CreateMapper();
     private readonly Mock<IBlobStorageService> _blobStorage = new();
     private readonly EventManagementService _service;
 
@@ -32,8 +36,9 @@ public class EditEventServiceTests
             _unitOfWork.Object,
             Mock.Of<ILogger<EventManagementService>>(),
             Mock.Of<IUserService>(),
-            _mapper.Object,
+            _mapper,
             new EventFileUploader(_blobStorage.Object));
+
     }
 
     [Fact]
